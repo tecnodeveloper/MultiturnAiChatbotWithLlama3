@@ -13,20 +13,20 @@
 
 ## Phase 1: ChatBot System Development (Frontend + Backend)
 
-FR1: System Initialization
-
+**FR1: System Initialization
+**
  - LLaMA 3 local model loading
  - Backend server initialization
  - Database connection setup
  - Analytics module initialization
 
-FR2: Frontend Chat Interface Development
- - Google OAuth login page
+**FR2: Frontend Chat Interface Development
+** - Google OAuth login page
  - Chat interface (user input + response display)
  - Feedback panel (rating, correctness, length type)
 
-FR3: Backend Server Development
-
+**FR3: Backend Server Development
+**
  - The system shall implement a backend using Flask/FastAPI.
  - The backend shall handle:
  - User authentication
@@ -34,13 +34,13 @@ FR3: Backend Server Development
  - Message routing to model
  - Data storage operations
 
-FR4: LLaMA 3 Model Integration
-
+**FR4: LLaMA 3 Model Integration
+**
  - The system shall integrate LLaMA 3 as the core chatbot engine.
  - The system shall process user queries locally through the model.
 
-FR5: Service Connectivity
- - The system shall connect:
+**FR5: Service Connectivity
+** - The system shall connect:
     1. Frontend UI
     2. Backend API
     3. LLaMA 3 model inference engine
