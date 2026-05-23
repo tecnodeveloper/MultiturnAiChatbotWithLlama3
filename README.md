@@ -279,38 +279,16 @@ project-root/
 
 ---
 
-# Installation Guide
+# Requirements
 
----
+- Python >= 3.8
+- Next.js (latest stable)
 
-## Step 2: Create Python Virtual Environment
+## Backend entrypoint (uv)
 
 ```bash
-python -m venv venv
+uv app.py
 ```
-
-Activate environment:
-
-### Windows
-
-```bash
-venv\Scripts\activate
-```
-
-npm install
-
-````
-
-
----
-
-## Step 7: Start Backend Server
-
-### FastAPI
-
-```bash
-uvicorn main:app --reload
-````
 
 ---
 
@@ -345,8 +323,6 @@ uvicorn main:app --reload
 - User personalization
 
 ---
-
-# Supervisor Information
 
 ## Supervisor
 
