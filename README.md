@@ -142,17 +142,7 @@ The original requirement suggested: HTML/CSS/JavaScript. This project uses **Nex
 
 # Why PostgreSQL Was Used Instead of SQLite
 
-This project uses **PostgreSQL** because it provides:
-
-- Better scalability
-- Better multi-user support
-- Improved concurrency handling
-- Strong relational database features
-- Better performance for large chat data
-- Production-level reliability
-- Better handling of analytics and session management
-
-SQLite is lightweight and suitable for small applications, but PostgreSQL is more suitable for:
+This project uses **PostgreSQL** SQLite is lightweight and suitable for small applications, but PostgreSQL is more suitable for:
 
 - Real-time chatbot systems
 - Multi-user applications
@@ -291,13 +281,6 @@ project-root/
 
 # Installation Guide
 
-## Step 1: Clone Repository
-
-```bash
-git clone <repository-url>
-cd project-folder
-```
-
 ---
 
 ## Step 2: Create Python Virtual Environment
@@ -314,62 +297,10 @@ Activate environment:
 venv\Scripts\activate
 ```
 
-### Linux/Mac
-
-```bash
-source venv/bin/activate
-```
-
----
-
-## Step 3: Install Backend Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Step 4: Install Frontend Dependencies
-
-```bash
-cd frontend
 npm install
-```
 
----
+````
 
-## Step 5: Install Ollama
-
-Download and install Ollama from:
-
-[Ollama Official Website](https://ollama.com/?utm_source=chatgpt.com)
-
-Run LLaMA 3 locally:
-
-```bash
-ollama run llama3
-```
-
----
-
-## Step 6: Setup PostgreSQL
-
-Install PostgreSQL from:
-
-[PostgreSQL Official Website](https://www.postgresql.org/?utm_source=chatgpt.com)
-
-Create database:
-
-```sql
-CREATE DATABASE chatbot_db;
-```
-
-Example environment variable:
-
-```env
-DATABASE_URL=postgresql://username:password@localhost:5432/chatbot_db
-```
 
 ---
 
@@ -379,29 +310,7 @@ DATABASE_URL=postgresql://username:password@localhost:5432/chatbot_db
 
 ```bash
 uvicorn main:app --reload
-```
-
-### Flask
-
-```bash
-python app.py
-```
-
----
-
-## Step 8: Run Frontend
-
-Inside frontend folder:
-
-```bash
-npm run dev
-```
-
-Frontend runs on:
-
-```text
-http://localhost:3000
-```
+````
 
 ---
 
@@ -446,32 +355,6 @@ http://localhost:3000
 Email: [neelam.alam@vu.edu.pk](mailto:neelam.alam@vu.edu.pk)
 
 Skype ID: neelam-cs
-
----
-
-# Developers
-
-Add your team member names here.
-
-Example:
-
-- Student Name 1
-- Student Name 2
-- Student Name 3
-
----
-
-# License
-
-This project is developed for educational purposes only.
-
----
-
-# Submission Instructions
-
-1. Complete Phase 1 implementation.
-2. Compress the project folder into ZIP format.
-3. Submit the ZIP file on LMS.
 
 ---
 
