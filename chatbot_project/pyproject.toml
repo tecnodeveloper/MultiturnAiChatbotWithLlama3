@@ -1,0 +1,22 @@
+[project]
+name = "llama3-chatbot"
+version = "1.0.0"
+description = "Multi-turn LLaMA 3 Chatbot with OpenRouter API"
+authors = [
+    {name = "Your Name", email = "you@example.com"}
+]
+requires-python = ">=3.8"
+dependencies = [
+    "flask==2.3.3",
+    "flask-cors==4.0.0",
+    "requests==2.31.0",
+    "groq==0.4.1",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.uv]
+# UV configuration
+# UV uses required-version, not python-version
