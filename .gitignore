@@ -10,10 +10,7 @@ ENV/
 build/
 develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
+
 lib64/
 parts/
 sdist/
@@ -26,15 +23,9 @@ wheels/
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
-.DS_Store
 
 # Database
 *.db
-*.sqlite
-*.sqlite3
 
 # Logs
 *.log
@@ -42,8 +33,3 @@ logs/
 
 # Environment & Secrets
 .env
-.env.local
-.env.*.local
-*.key
-*.pem
-secrets.json

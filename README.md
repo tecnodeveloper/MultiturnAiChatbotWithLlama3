@@ -1,317 +1,543 @@
-# Multi-Turn LLaMA 3 Chatbot with OpenRouter API
+# Multi-Turn AI Chatbot with LLaMA 3
 
-A modern, interactive multi-turn chatbot web application powered by LLaMA 3 through OpenRouter API. Built with Flask backend, modern HTML/CSS/JavaScript frontend, and SQLite for session management.
+## Project Overview
 
-## Features
+This project is a **Multi-Turn AI Chatbot System** developed using **LLaMA 3** as the core conversational AI engine. The chatbot supports multi-turn conversations, user authentication, feedback collection, analytics, and local AI inference.
 
-✨ **Multi-Turn Conversations**: Maintain context across multiple exchanges in a single session  
-💾 **Session Management**: Automatic session creation and chat history storage  
-📊 **Analytics Dashboard**: Track conversation metrics and usage statistics  
-🎨 **Modern Dark UI**: Sleek, responsive interface with gradient design  
-🔄 **Real-time Chat**: Instant messaging with typing indicators  
-📱 **Responsive Design**: Works seamlessly on desktop and mobile devices  
-💬 **Quick Actions**: Pre-defined prompts for easy interaction  
-📝 **Feedback System**: Collect user feedback for improvement
+The project is divided into phases.
+This repository contains **PHASE 1: Frontend + Backend System Development**.
 
-## Architecture
+---
 
+# Project Domain
+
+* Artificial Intelligence (AI)
+* Natural Language Processing (NLP)
+* Conversational AI
+
+---
+
+# Phase 1 Objectives
+
+Phase 1 focuses on building the complete system foundation including:
+
+* Frontend Chat Interface
+* Backend API Server
+* Google OAuth Authentication
+* LLaMA 3 Integration
+* Database Connectivity
+* Feedback Collection System
+* Analytics Module Initialization
+
+---
+
+# Functional Requirements
+
+## FR1: System Initialization
+
+The system initializes the following modules during startup:
+
+* LLaMA 3 local model loading
+* Backend server initialization
+* Database connection setup
+* Analytics module initialization
+
+---
+
+## FR2: Frontend Chat Interface Development
+
+The system provides a web-based chat UI including:
+
+* Google OAuth login page
+* Chat interface (user input + response display)
+* Feedback panel
+
+  * Rating
+  * Correctness
+  * Response length type
+
+---
+
+## FR3: Backend Server Development
+
+The backend is developed using Flask or FastAPI and handles:
+
+* User authentication
+* Session creation and management
+* Message routing to model
+* Data storage operations
+
+---
+
+## FR4: LLaMA 3 Model Integration
+
+The chatbot integrates LLaMA 3 as the core chatbot engine.
+
+Features:
+
+* Local AI inference
+* Multi-turn conversation support
+* Prompt-response processing
+
+---
+
+## FR5: Service Connectivity
+
+The system connects:
+
+* Frontend UI
+* Backend API
+* LLaMA 3 inference engine
+* Database
+* Analytics module
+
+---
+
+# Original Suggested Technology Stack
+
+The university/project guideline suggested the following stack:
+
+| Technology                    | Purpose                 |
+| ----------------------------- | ----------------------- |
+| Python                        | Backend development     |
+| LLaMA 3                       | AI chatbot engine       |
+| Flask / FastAPI               | Backend APIs            |
+| HTML/CSS/JavaScript           | Frontend UI             |
+| MongoDB / Firebase            | Database                |
+| pandas                        | Data analytics          |
+| matplotlib / seaborn / plotly | Graph generation        |
+| scikit-learn                  | Analytics support       |
+| Ollama                        | Local LLaMA serving     |
+| Google OAuth 2.0              | Authentication          |
+| VS Code / Jupyter Notebook    | Development environment |
+
+---
+
+# Alternative Architecture for Hardware Limitations
+
+Some students may face difficulty running **LLaMA 3 locally** due to limited hardware resources such as:
+
+* Low RAM
+* Older processors
+* No GPU support
+* 32-bit operating systems
+
+In such cases, the following alternative architecture is acceptable:
+
+* Local Frontend using HTML/CSS/JavaScript
+* Google Colab as Backend Environment
+* Flask APIs for backend communication
+* LLaMA 3 integration through Groq API (or any relevant free API)
+* SQLite Database for chat/session storage
+* Python libraries for analytics and graph generation
+
+This architecture still fulfills all project functional requirements including:
+
+* Multi-turn chatbot interaction
+* Session management
+* Feedback mechanism
+* Real-time response handling
+* Data storage
+* Analytics dashboard and graph generation
+
+Students should clearly mention in documentation that:
+
+* Cloud-based inference is being used due to hardware limitations.
+* The system still fulfills all project requirements.
+
+---
+
+# Updated Technology Stack Used in This Project
+
+This project uses an upgraded modern stack while maintaining all required functionality.
+
+| Technology                    | Purpose             |
+| ----------------------------- | ------------------- |
+| Python                        | Backend development |
+| FastAPI / Flask               | Backend APIs        |
+| Next.js                       | Frontend framework  |
+| React                         | Component-based UI  |
+| Tailwind CSS                  | Frontend styling    |
+| LLaMA 3                       | AI chatbot engine   |
+| Ollama                        | Local LLaMA serving |
+| PostgreSQL                    | Database            |
+| pandas                        | Data analytics      |
+| matplotlib / seaborn / plotly | Graph generation    |
+| scikit-learn                  | Analytics support   |
+| Google OAuth 2.0              | Authentication      |
+| VS Code / Jupyter Notebook    | Development tools   |
+
+---
+
+# Why Next.js Was Used Instead of HTML/CSS/JavaScript
+
+The original requirement suggested:
+
+* HTML
+* CSS
+* JavaScript
+
+This project uses **Next.js** because it provides:
+
+* Better scalability
+* Component-based architecture
+* Faster development workflow
+* Better routing and dashboard management
+* Easier backend API integration
+* Improved maintainability
+* Modern industry-standard frontend development
+
+Although Next.js is used, it is still fundamentally based on:
+
+* HTML
+* CSS
+* JavaScript
+
+Therefore, the project remains fully aligned with the original requirements.
+
+---
+
+# Why PostgreSQL Was Used Instead of SQLite
+
+The alternative architecture suggested using SQLite.
+
+This project uses **PostgreSQL** because it provides:
+
+* Better scalability
+* Better multi-user support
+* Improved concurrency handling
+* Strong relational database features
+* Better performance for large chat data
+* Production-level reliability
+* Better handling of analytics and session management
+
+SQLite is lightweight and suitable for small applications, but PostgreSQL is more suitable for:
+
+* Real-time chatbot systems
+* Multi-user applications
+* Large chat/session storage
+* Analytics processing
+
+The backend architecture and project functionality remain unchanged.
+
+---
+
+# Project Architecture
+
+## Main Components
+
+### 1. Frontend Web Application
+
+Built using **Next.js**.
+
+Responsible for:
+
+* Login/signup pages
+* Google authentication
+* Chat dashboard
+* Chat interface
+* Feedback collection
+
+---
+
+### 2. Backend API Server
+
+Responsible for:
+
+* API routing
+* Session management
+* Authentication
+* AI request handling
+* Database communication
+
+---
+
+### 3. LLaMA 3 Inference Engine
+
+Responsible for:
+
+* Generating chatbot responses
+* Processing prompts locally
+* Maintaining conversational context
+
+---
+
+### 4. Database
+
+Built using **PostgreSQL**.
+
+Stores:
+
+* User accounts
+* Sessions
+* Chat history
+* Feedback data
+* Analytics data
+
+---
+
+### 5. Analytics Module
+
+Responsible for:
+
+* Feedback analysis
+* Usage analytics
+* Topic classification
+* Graph generation
+
+---
+
+# Project Workflow
+
+```text
+Login / Signup
+       ↓
+Google Authentication
+       ↓
+Dashboard
+       ↓
+Chat Interface
+       ↓
+User Sends Message
+       ↓
+Backend API
+       ↓
+LLaMA 3 Processing
+       ↓
+AI Response Returned
+       ↓
+Feedback Collection
+       ↓
+Analytics Processing
 ```
-chatbot_project/
-├── app.py                    # Flask backend with OpenRouter integration
-├── requirements.txt          # Python dependencies
-├── chatbot.db               # SQLite database (auto-created)
-├── templates/
-│   └── index.html           # Main HTML template
-└── static/
-    ├── css/
-    │   └── style.css        # Modern styling
-    └── js/
-        └── script.js        # Client-side logic
+
+---
+
+# Folder Structure
+
+```text
+project-root/
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── pages/
+│   ├── styles/
+│   ├── public/
+│   └── package.json
+│
+├── backend/
+│   ├── routes/
+│   ├── auth/
+│   ├── models/
+│   ├── services/
+│   └── main.py
+│
+├── database/
+│
+├── analytics/
+│
+├── llama/
+│
+├── docs/
+│
+├── requirements.txt
+│
+└── README.md
 ```
 
-### Technology Stack
+---
 
-- **Backend**: Flask (Python web framework)
-- **API Integration**: OpenRouter API for LLaMA 3 inference
-- **Database**: SQLite (chat history, sessions, analytics)
-- **Frontend**: HTML5, CSS3 (Grid/Flexbox), Vanilla JavaScript
-- **AI Model**: Meta LLaMA 3 (8B Instruct via OpenRouter)
+# Installation Guide
 
-## Installation
+## Step 1: Clone Repository
 
-### Prerequisites
+```bash
+git clone <repository-url>
+cd project-folder
+```
 
-- Python 3.8 or higher
-- pip (Python package manager)
-- OpenRouter API key (free tier available at https://openrouter.io)
+---
 
-### Setup Steps
+## Step 2: Create Python Virtual Environment
 
-1. **Clone or Navigate to Project Directory**
+```bash
+python -m venv venv
+```
 
-   ```bash
-   cd chatbot_project
-   ```
+Activate environment:
 
-2. **Create Virtual Environment** (Recommended)
+### Windows
 
-   ```bash
-   # On Windows
-   python -m venv venv
-   venv\Scripts\activate
+```bash
+venv\Scripts\activate
+```
 
-   # On macOS/Linux
-   python3 -m venv venv
-   source venv/bin/activate
-   ```
+### Linux/Mac
 
-3. **Install Dependencies**
+```bash
+source venv/bin/activate
+```
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+---
 
-4. **Configure API Key** (Already set in app.py)
-   - The OpenRouter API key is pre-configured in `app.py`
-   - To use a different key, edit the `OPENROUTER_API_KEY` variable in `app.py`
+## Step 3: Install Backend Dependencies
 
-5. **Run the Application**
+```bash
+pip install -r requirements.txt
+```
 
-   ```bash
-   python app.py
-   ```
+---
 
-6. **Access the Chatbot**
-   - Open your browser and navigate to: `http://localhost:5000`
-   - The application will automatically create the SQLite database
+## Step 4: Install Frontend Dependencies
 
-## Usage
+```bash
+cd frontend
+npm install
+```
 
-### Starting a Conversation
+---
 
-1. Click "New Chat" button (top-left ➕) to create a new conversation
-2. Type your message in the input field at the bottom
-3. Press Enter or click the send button (➤)
-4. The AI will respond while maintaining conversation context
+## Step 5: Install Ollama
 
-### Quick Actions
+Download and install Ollama from:
 
-Use pre-defined prompts for instant interaction:
+[Ollama Official Website](https://ollama.com/?utm_source=chatgpt.com)
 
-- **Quantum Computing**: Ask about quantum physics and computation
-- **Python Help**: Get programming assistance
-- **Study Tips**: Receive study strategies and tips
+Run LLaMA 3 locally:
 
-### Chat History
+```bash
+ollama run llama3
+```
 
-- All chats are automatically saved in the left sidebar
-- Click any previous chat to resume the conversation
-- Chat titles are auto-generated from your first message
+---
 
-### Analytics
+## Step 6: Setup PostgreSQL
 
-1. Click the "📊 Analytics" button in the sidebar
-2. View:
-   - Total conversations started
-   - Messages sent count
-   - Sessions created
-   - Last active time
-3. Submit feedback in the feedback section
+Install PostgreSQL from:
 
-## API Endpoints
+[PostgreSQL Official Website](https://www.postgresql.org/?utm_source=chatgpt.com)
 
-| Endpoint                      | Method | Description                   |
-| ----------------------------- | ------ | ----------------------------- |
-| `/`                           | GET    | Main chatbot interface        |
-| `/api/session/new`            | POST   | Create new chat session       |
-| `/api/sessions`               | GET    | Fetch all chat sessions       |
-| `/api/chat`                   | POST   | Send message and get response |
-| `/api/analytics/<session_id>` | GET    | Get session analytics         |
-| `/api/feedback`               | POST   | Submit user feedback          |
-
-## Database Schema
-
-### Sessions Table
+Create database:
 
 ```sql
-CREATE TABLE sessions (
-    id TEXT PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    title TEXT
-);
+CREATE DATABASE chatbot_db;
 ```
 
-### Messages Table
+Example environment variable:
 
-```sql
-CREATE TABLE messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id TEXT,
-    role TEXT,              -- 'user' or 'assistant'
-    content TEXT,
-    timestamp TIMESTAMP,
-    FOREIGN KEY(session_id) REFERENCES sessions(id)
-);
+```env
+DATABASE_URL=postgresql://username:password@localhost:5432/chatbot_db
 ```
 
-### Analytics Table
+---
 
-```sql
-CREATE TABLE analytics (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    session_id TEXT,
-    total_messages INTEGER,
-    avg_response_time REAL,
-    user_feedback TEXT,
-    timestamp TIMESTAMP
-);
+## Step 7: Start Backend Server
+
+### FastAPI
+
+```bash
+uvicorn main:app --reload
 ```
 
-## Configuration
+### Flask
 
-### Model Settings (in app.py)
-
-```python
-MODEL = "meta-llama/llama-3-8b-instruct"  # LLaMA 3 8B model
-OPENROUTER_URL = "https://openrouter.io/api/v1/chat/completions"
-OPENROUTER_API_KEY = "your-api-key-here"
+```bash
+python app.py
 ```
 
-### Temperature & Tokens
+---
 
-- **Temperature**: 0.7 (controls response creativity: 0=deterministic, 1=random)
-- **Max Tokens**: 1024 (maximum response length)
+## Step 8: Run Frontend
 
-Modify these in `app.py` line for different behavior:
+Inside frontend folder:
 
-```python
-json={
-    "model": MODEL,
-    "messages": messages,
-    "temperature": 0.7,      # Adjust here
-    "max_tokens": 1024       # Adjust here
-}
+```bash
+npm run dev
 ```
 
-## Features in Detail
+Frontend runs on:
 
-### Multi-Turn Conversation
-
-The chatbot maintains full conversation history:
-
-- Every message (user and assistant) is stored in the database
-- Full message history is sent to the API on each request
-- LLaMA 3 understands context across multiple turns
-- Sessions persist across browser sessions
-
-### Modern UI Design
-
-Dark theme with:
-
-- Gradient backgrounds
-- Smooth animations and transitions
-- Blue accent color (#3b82f6)
-- Responsive grid layout
-- Typing indicators while waiting for response
-
-### Session Management
-
-- Auto-generated unique session IDs using UUID
-- Session titles derived from first user message
-- Last-accessed time tracking
-- Easy session switching from sidebar
-
-## Troubleshooting
-
-### Issue: "API Error: 401"
-
-**Solution**: Check your OpenRouter API key in `app.py`. Ensure you're using a valid key.
-
-### Issue: "Failed to connect to OpenRouter"
-
-**Solution**:
-
-- Verify internet connection
-- Check if OpenRouter is operational (openrouter.io)
-- Review API rate limits
-
-### Issue: Database locked error
-
-**Solution**:
-
-- Close all other instances of the app
-- Delete `chatbot.db` to reset
-- Restart the application
-
-### Issue: Port 5000 already in use
-
-**Solution**: Change port in `app.py`
-
-```python
-if __name__ == '__main__':
-    app.run(debug=True, port=5001)  # Use different port
+```text
+http://localhost:3000
 ```
 
-## Performance Tips
+---
 
-1. **Response Time**: Initial response may take 2-5 seconds (API latency)
-2. **Long Sessions**: For sessions with 20+ messages, responses may be slightly slower
-3. **Browser**: Use Chrome/Firefox for best experience
+# Google OAuth Setup
 
-## Security Considerations
+1. Open Google Cloud Console:
+   [Google Cloud Console](https://console.cloud.google.com/?utm_source=chatgpt.com)
 
-- API key is stored in source code (for development only)
-- For production, use environment variables:
-  ```python
-  import os
-  OPENROUTER_API_KEY = os.getenv('OPENROUTER_API_KEY')
-  ```
-- Implement HTTPS in production
-- Add user authentication for multi-user deployment
+2. Create a new project.
 
-## Limitations
+3. Enable OAuth 2.0 APIs.
 
-- OpenRouter API calls consume credits
-- Free tier has rate limits (check OpenRouter dashboard)
-- Maximum context window: ~4000 tokens (LLaMA 3)
-- No image support (text-only conversations)
+4. Create OAuth credentials.
 
-## Future Enhancements
+5. Add authorized redirect URIs.
 
-- [ ] User authentication and multi-user support
-- [ ] Chat export (PDF, markdown)
-- [ ] Custom system prompts per session
-- [ ] Voice input/output
-- [ ] Code syntax highlighting in responses
-- [ ] Conversation search functionality
-- [ ] Advanced analytics with charts
-- [ ] Dark/Light mode toggle
+6. Save:
 
-## License
+* Client ID
+* Client Secret
 
-This project is provided as-is for educational purposes.
+---
 
-## Support
+# Future Enhancements
 
-For issues or questions:
+* Voice chatbot integration
+* Real-time streaming responses
+* Admin dashboard
+* Conversation summarization
+* Multi-language support
+* Emotion detection
+* User personalization
 
-1. Check the Troubleshooting section
-2. Verify OpenRouter API status
-3. Review browser console for errors (F12)
-4. Check server logs in terminal
+---
 
-## Project Documentation
+# Supervisor Information
 
-This project demonstrates:
+## Supervisor
 
-- ✅ Multi-turn chatbot interaction
-- ✅ Session management and persistence
-- ✅ Real-time response handling
-- ✅ Data storage with SQLite
-- ✅ Analytics and feedback mechanisms
-- ✅ Modern responsive UI/UX
-- ✅ Flask REST API development
-- ✅ Cloud-based AI inference (OpenRouter)
+**Neelam Alam**
 
-Perfect for CS619 AI Systems course requirements!
+Email: [neelam.alam@vu.edu.pk](mailto:neelam.alam@vu.edu.pk)
+
+Skype ID: neelam-cs
+
+---
+
+# Developers
+
+Add your team member names here.
+
+Example:
+
+* Student Name 1
+* Student Name 2
+* Student Name 3
+
+---
+
+# License
+
+This project is developed for educational purposes only.
+
+---
+
+# Submission Instructions
+
+1. Complete Phase 1 implementation.
+2. Compress the project folder into ZIP format.
+3. Submit the ZIP file on LMS.
+
+---
+
+# Final Notes
+
+* This project is implementation-based and not an SRS document.
+* Focus on developing working modules and integrations.
+* Ensure frontend and backend connectivity is functional.
+* Verify LLaMA 3 integration before final submission.
+* The project fulfills all PHASE 1 functional requirements successfully.
