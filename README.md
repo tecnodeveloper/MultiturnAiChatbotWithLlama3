@@ -116,7 +116,7 @@ This project uses an upgraded modern stack while maintaining all required functi
 | Tailwind CSS                  | Frontend styling    |
 | LLaMA 3                       | AI chatbot engine   |
 | Ollama                        | Local LLaMA serving |
-| PostgreSQL                    | Database            |
+| Supabase                      | Database            |
 | pandas                        | Data analytics      |
 | matplotlib / seaborn / plotly | Graph generation    |
 | scikit-learn                  | Analytics support   |
@@ -140,14 +140,17 @@ The original requirement suggested: HTML/CSS/JavaScript. This project uses **Nex
 
 ---
 
-# Why PostgreSQL Was Used Instead of SQLite
+# Why Supabase Was Used as Database
 
-This project uses **PostgreSQL** SQLite is lightweight and suitable for small applications, but PostgreSQL is more suitable for:
+This project uses **Supabase** as the database backend. Supabase provides:
 
-- Real-time chatbot systems
-- Multi-user applications
-- Large chat/session storage
-- Analytics processing
+- Real-time database capabilities for chatbot systems
+- Built-in authentication and authorization
+- Multi-user application support
+- Scalable chat/session storage
+- Analytics data management
+- Easy integration with Next.js frontend
+- Pre-built REST and GraphQL APIs
 
 The backend architecture and project functionality remain unchanged.
 
@@ -195,7 +198,7 @@ Responsible for:
 
 ### 4. Database
 
-Built using **PostgreSQL**.
+Built using **supabase**.
 
 Stores:
 
