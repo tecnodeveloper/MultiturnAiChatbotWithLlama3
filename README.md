@@ -246,36 +246,76 @@ Analytics Processing
 
 # Folder Structure
 
-```text
-project-root/
+MultiTurnAI chatbot with Llama3/
 │
-├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── pages/
-│   ├── styles/
-│   ├── public/
-│   └── package.json
+├── frontend/ # Next.js frontend
+│ ├── app/
+│ │ ├── (auth)/
+│ │ ├── dashboard/
+│ │ ├── chat/
+│ │ └── api/
+│ │
+│ ├── components/
+│ │ ├── ui/
+│ │ ├── chat/
+│ │ ├── auth/
+│ │ └── feedback/
+│ │
+│ ├── hooks/
+│ ├── lib/
+│ ├── services/
+│ ├── store/
+│ ├── styles/
+│ ├── types/
+│ ├── public/
+│ ├── middleware.ts
+│ ├── tailwind.config.ts
+│ └── package.json
 │
-├── backend/
-│   ├── routes/
-│   ├── auth/
-│   ├── models/
-│   ├── services/
-│   └── main.py
+├── backend/ # FastAPI backend
+│ ├── app/
+│ │ ├── api/
+│ │ │ ├── routes/
+│ │ │ └── dependencies/
+│ │ │
+│ │ ├── core/
+│ │ │ ├── config.py
+│ │ │ ├── security.py
+│ │ │ └── database.py
+│ │ │
+│ │ ├── models/
+│ │ ├── schemas/
+│ │ ├── services/
+│ │ │ ├── ai/
+│ │ │ ├── auth/
+│ │ │ ├── chat/
+│ │ │ └── analytics/
+│ │ │
+│ │ ├── utils/
+│ │ └── main.py
+│ │
+│ ├── requirements.txt
+│ └── .env
 │
 ├── database/
+│ ├── migrations/
+│ ├── seeds/
+│ └── schema.sql
 │
 ├── analytics/
-│
-├── llama/
+│ ├── notebooks/
+│ ├── reports/
+│ └── scripts/
 │
 ├── docs/
+│ ├── diagrams/
+│ └── api/
 │
-├── requirements.txt
+├── .github/
+│ └── workflows/
 │
-└── README.md
-```
+├── README.md
+├── .gitignore
 
 ---
 
@@ -284,7 +324,7 @@ project-root/
 - Python >= 3.8
 - Next.js (latest stable)
 
-## Backend entrypoint (uv)
+## Running
 
 ```bash
 uv app.py
@@ -318,8 +358,6 @@ uv app.py
 - Real-time streaming responses
 - Admin dashboard
 - Conversation summarization
-- Multi-language support
-- Emotion detection
 - User personalization
 
 ---

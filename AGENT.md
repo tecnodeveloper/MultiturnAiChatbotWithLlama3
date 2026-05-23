@@ -95,3 +95,75 @@ Build Phase 1 of a multi-turn AI chatbot system using:
 - Google OAuth
 - OpenRouter/Groq API for LLaMA 3 inference
 - Analytics + feedback system
+  project-root/
+  │
+  ├── frontend/ # Next.js frontend
+  │ ├── app/
+  │ │ ├── (auth)/
+  │ │ ├── dashboard/
+  │ │ ├── chat/
+  │ │ └── api/
+  │ │
+  │ ├── components/
+  │ │ ├── ui/
+  │ │ ├── chat/
+  │ │ ├── auth/
+  │ │ └── feedback/
+  │ │
+  │ ├── hooks/
+  │ ├── lib/
+  │ ├── services/
+  │ ├── store/
+  │ ├── styles/
+  │ ├── types/
+  │ ├── public/
+  │ ├── middleware.ts
+  │ ├── tailwind.config.ts
+  │ └── package.json
+  │
+  ├── backend/ # FastAPI backend
+  │ ├── app/
+  │ │ ├── api/
+  │ │ │ ├── routes/
+  │ │ │ └── dependencies/
+  │ │ │
+  │ │ ├── core/
+  │ │ │ ├── config.py
+  │ │ │ ├── security.py
+  │ │ │ └── database.py
+  │ │ │
+  │ │ ├── models/
+  │ │ ├── schemas/
+  │ │ ├── services/
+  │ │ │ ├── ai/
+  │ │ │ ├── auth/
+  │ │ │ ├── chat/
+  │ │ │ └── analytics/
+  │ │ │
+  │ │ ├── utils/
+  │ │ └── main.py
+  │ │
+  │ ├── requirements.txt
+  │ └── .env
+  │
+  ├── database/
+  │ ├── migrations/
+  │ ├── seeds/
+  │ └── schema.sql
+  │
+  ├── analytics/
+  │ ├── notebooks/
+  │ ├── reports/
+  │ └── scripts/
+  │
+  ├── docs/
+  │ ├── diagrams/
+  │ └── api/
+  │
+  ├── .github/
+  │ └── workflows/
+  │
+  ├── README.md
+  ├── AGENT.md
+  ├── .gitignore
+  └── docker-compose.yml
