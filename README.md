@@ -1,33 +1,22 @@
 # Multi-Turn AI Chatbot with LLaMA 3
 
+Artificial Intelligence / Natural Language Processing / Conversational AI
+
 ## Project Overview
 
 This project is a **Multi-Turn AI Chatbot System** developed using **LLaMA 3** as the core conversational AI engine. The chatbot supports multi-turn conversations, user authentication, feedback collection, analytics, and local AI inference.
-
-The project is divided into phases.
-This repository contains **PHASE 1: Frontend + Backend System Development**.
-
----
-
-# Project Domain
-
-* Artificial Intelligence (AI)
-* Natural Language Processing (NLP)
-* Conversational AI
-
----
 
 # Phase 1 Objectives
 
 Phase 1 focuses on building the complete system foundation including:
 
-* Frontend Chat Interface
-* Backend API Server
-* Google OAuth Authentication
-* LLaMA 3 Integration
-* Database Connectivity
-* Feedback Collection System
-* Analytics Module Initialization
+- Frontend Chat Interface
+- Backend API Server
+- Google OAuth Authentication
+- LLaMA 3 Integration
+- Database Connectivity
+- Feedback Collection System
+- Analytics Module Initialization
 
 ---
 
@@ -37,10 +26,10 @@ Phase 1 focuses on building the complete system foundation including:
 
 The system initializes the following modules during startup:
 
-* LLaMA 3 local model loading
-* Backend server initialization
-* Database connection setup
-* Analytics module initialization
+- LLaMA 3 local model loading
+- Backend server initialization
+- Database connection setup
+- Analytics module initialization
 
 ---
 
@@ -48,13 +37,12 @@ The system initializes the following modules during startup:
 
 The system provides a web-based chat UI including:
 
-* Google OAuth login page
-* Chat interface (user input + response display)
-* Feedback panel
-
-  * Rating
-  * Correctness
-  * Response length type
+- Google OAuth login page
+- Chat interface (user input + response display)
+- Feedback panel
+  - Rating
+  - Correctness
+  - Response length type
 
 ---
 
@@ -62,10 +50,10 @@ The system provides a web-based chat UI including:
 
 The backend is developed using Flask or FastAPI and handles:
 
-* User authentication
-* Session creation and management
-* Message routing to model
-* Data storage operations
+- User authentication
+- Session creation and management
+- Message routing to model
+- Data storage operations
 
 ---
 
@@ -75,9 +63,9 @@ The chatbot integrates LLaMA 3 as the core chatbot engine.
 
 Features:
 
-* Local AI inference
-* Multi-turn conversation support
-* Prompt-response processing
+- Local AI inference
+- Multi-turn conversation support
+- Prompt-response processing
 
 ---
 
@@ -85,15 +73,15 @@ Features:
 
 The system connects:
 
-* Frontend UI
-* Backend API
-* LLaMA 3 inference engine
-* Database
-* Analytics module
+- Frontend UI
+- Backend API
+- LLaMA 3 inference engine
+- Database
+- Analytics module
 
 ---
 
-# Original Suggested Technology Stack
+# Suggested Tech Stack
 
 The university/project guideline suggested the following stack:
 
@@ -113,41 +101,9 @@ The university/project guideline suggested the following stack:
 
 ---
 
-# Alternative Architecture for Hardware Limitations
+# Updated Tech Stack
 
-Some students may face difficulty running **LLaMA 3 locally** due to limited hardware resources such as:
-
-* Low RAM
-* Older processors
-* No GPU support
-* 32-bit operating systems
-
-In such cases, the following alternative architecture is acceptable:
-
-* Local Frontend using HTML/CSS/JavaScript
-* Google Colab as Backend Environment
-* Flask APIs for backend communication
-* LLaMA 3 integration through Groq API (or any relevant free API)
-* SQLite Database for chat/session storage
-* Python libraries for analytics and graph generation
-
-This architecture still fulfills all project functional requirements including:
-
-* Multi-turn chatbot interaction
-* Session management
-* Feedback mechanism
-* Real-time response handling
-* Data storage
-* Analytics dashboard and graph generation
-
-Students should clearly mention in documentation that:
-
-* Cloud-based inference is being used due to hardware limitations.
-* The system still fulfills all project requirements.
-
----
-
-# Updated Technology Stack Used in This Project
+I'm facing difficulty running **LLaMA 3 locally** due to limited hardware resources So I'm using grok or openRouter api
 
 This project uses an upgraded modern stack while maintaining all required functionality.
 
@@ -171,52 +127,37 @@ This project uses an upgraded modern stack while maintaining all required functi
 
 # Why Next.js Was Used Instead of HTML/CSS/JavaScript
 
-The original requirement suggested:
+The original requirement suggested: HTML/CSS/JavaScript. This project uses **Next.js** because it provides:
 
-* HTML
-* CSS
-* JavaScript
-
-This project uses **Next.js** because it provides:
-
-* Better scalability
-* Component-based architecture
-* Faster development workflow
-* Better routing and dashboard management
-* Easier backend API integration
-* Improved maintainability
-* Modern industry-standard frontend development
-
-Although Next.js is used, it is still fundamentally based on:
-
-* HTML
-* CSS
-* JavaScript
-
-Therefore, the project remains fully aligned with the original requirements.
+- Better scalability
+- Component-based architecture
+- Faster development workflow
+- Better routing and dashboard management
+- Easier backend API integration
+- Improved maintainability
+- Modern industry-standard frontend development
+  Therefore, the project remains fully aligned with the original requirements.
 
 ---
 
 # Why PostgreSQL Was Used Instead of SQLite
 
-The alternative architecture suggested using SQLite.
-
 This project uses **PostgreSQL** because it provides:
 
-* Better scalability
-* Better multi-user support
-* Improved concurrency handling
-* Strong relational database features
-* Better performance for large chat data
-* Production-level reliability
-* Better handling of analytics and session management
+- Better scalability
+- Better multi-user support
+- Improved concurrency handling
+- Strong relational database features
+- Better performance for large chat data
+- Production-level reliability
+- Better handling of analytics and session management
 
 SQLite is lightweight and suitable for small applications, but PostgreSQL is more suitable for:
 
-* Real-time chatbot systems
-* Multi-user applications
-* Large chat/session storage
-* Analytics processing
+- Real-time chatbot systems
+- Multi-user applications
+- Large chat/session storage
+- Analytics processing
 
 The backend architecture and project functionality remain unchanged.
 
@@ -232,11 +173,11 @@ Built using **Next.js**.
 
 Responsible for:
 
-* Login/signup pages
-* Google authentication
-* Chat dashboard
-* Chat interface
-* Feedback collection
+- Login/signup pages
+- Google authentication
+- Chat dashboard
+- Chat interface
+- Feedback collection
 
 ---
 
@@ -244,11 +185,11 @@ Responsible for:
 
 Responsible for:
 
-* API routing
-* Session management
-* Authentication
-* AI request handling
-* Database communication
+- API routing
+- Session management
+- Authentication
+- AI request handling
+- Database communication
 
 ---
 
@@ -256,9 +197,9 @@ Responsible for:
 
 Responsible for:
 
-* Generating chatbot responses
-* Processing prompts locally
-* Maintaining conversational context
+- Generating chatbot responses
+- Processing prompts locally
+- Maintaining conversational context
 
 ---
 
@@ -268,11 +209,11 @@ Built using **PostgreSQL**.
 
 Stores:
 
-* User accounts
-* Sessions
-* Chat history
-* Feedback data
-* Analytics data
+- User accounts
+- Sessions
+- Chat history
+- Feedback data
+- Analytics data
 
 ---
 
@@ -280,10 +221,10 @@ Stores:
 
 Responsible for:
 
-* Feedback analysis
-* Usage analytics
-* Topic classification
-* Graph generation
+- Feedback analysis
+- Usage analytics
+- Topic classification
+- Graph generation
 
 ---
 
@@ -479,20 +420,20 @@ http://localhost:3000
 
 6. Save:
 
-* Client ID
-* Client Secret
+- Client ID
+- Client Secret
 
 ---
 
 # Future Enhancements
 
-* Voice chatbot integration
-* Real-time streaming responses
-* Admin dashboard
-* Conversation summarization
-* Multi-language support
-* Emotion detection
-* User personalization
+- Voice chatbot integration
+- Real-time streaming responses
+- Admin dashboard
+- Conversation summarization
+- Multi-language support
+- Emotion detection
+- User personalization
 
 ---
 
@@ -514,9 +455,9 @@ Add your team member names here.
 
 Example:
 
-* Student Name 1
-* Student Name 2
-* Student Name 3
+- Student Name 1
+- Student Name 2
+- Student Name 3
 
 ---
 
@@ -536,8 +477,8 @@ This project is developed for educational purposes only.
 
 # Final Notes
 
-* This project is implementation-based and not an SRS document.
-* Focus on developing working modules and integrations.
-* Ensure frontend and backend connectivity is functional.
-* Verify LLaMA 3 integration before final submission.
-* The project fulfills all PHASE 1 functional requirements successfully.
+- This project is implementation-based and not an SRS document.
+- Focus on developing working modules and integrations.
+- Ensure frontend and backend connectivity is functional.
+- Verify LLaMA 3 integration before final submission.
+- The project fulfills all PHASE 1 functional requirements successfully.
