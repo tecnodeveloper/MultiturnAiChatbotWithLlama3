@@ -1,11 +1,10 @@
-import { createClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-  const redirectTo =
-    requestUrl.searchParams.get("redirect_to") || "/chat/dashboard";
+  const redirectTo = requestUrl.searchParams.get("redirect_to") || "/dashboard";
 
   if (code) {
     const supabase = await createClient();
@@ -16,5 +15,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.redirect(new URL("/auth/error", request.url));
+  return NextResponse.redirect(
+    new URL("/login?message=Authentication%20failed", request.url),
+  );
 }

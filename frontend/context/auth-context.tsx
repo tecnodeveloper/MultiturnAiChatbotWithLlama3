@@ -1,16 +1,20 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import { createBrowserSupabaseClient } from "@/lib/supabase";
+import { signInWithGoogle, signOut } from "@/lib/auth";
+import type { Session, User } from "@supabase/supabase-js";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export interface AuthUser {
   id: string;
   email: string;
-  name?: string;
+  name: string;
   avatar?: string;
 }
 
-export interface AuthContextType {
+interface AuthContextType {
   user: AuthUser | null;
+  session: Session | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<void>;
@@ -21,143 +25,126 @@ export interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const supabase = createBrowserSupabaseClient();
+
+function mapUser(user: User | null): AuthUser | null {
+  if (!user) {
+    return null;
+  }
+
+  const metadata = user.user_metadata ?? {};
+
+  return {
+    id: user.id,
+    email: user.email ?? "",
+    name:
+      (metadata.name as string | undefined) ||
+      (metadata.full_name as string | undefined) ||
+      user.email?.split("@")[0] ||
+      "MultiTurn User",
+    avatar:
+      (metadata.avatar_url as string | undefined) ||
+      (metadata.picture as string | undefined) ||
+      undefined,
+  };
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Check for existing session on mount
   useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const storedUser = localStorage.getItem("auth_user");
-        if (storedUser) {
-          const parsedUser = JSON.parse(storedUser);
-          // Validate user still exists (in production, verify session token with backend)
-          setUser(parsedUser);
-        }
-      } catch (error) {
-        console.error("Failed to restore session:", error);
-        localStorage.removeItem("auth_user");
-      } finally {
-        setIsLoading(false);
+    let mounted = true;
+
+    const initialize = async () => {
+      const { data } = await supabase.auth.getSession();
+
+      if (!mounted) {
+        return;
       }
+
+      setSession(data.session);
+      setUser(mapUser(data.session?.user ?? null));
+      setIsLoading(false);
     };
 
-    checkSession();
+    initialize();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (_event, nextSession) => {
+        setSession(nextSession);
+        setUser(mapUser(nextSession?.user ?? null));
+        setIsLoading(false);
+      },
+    );
+
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    setIsLoading(true);
-    try {
-      // In production, call backend to verify credentials
-      // For now, simulate validation
-      if (!email || !password) {
-        throw new Error("Email and password are required");
-      }
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      // Check if user "exists" in our temporary storage
-      const storedUsers = JSON.parse(localStorage.getItem("app_users") || "{}");
-      const existingUser = Object.values(storedUsers).find(
-        (u: any) => u.email === email
-      );
-
-      if (!existingUser) {
-        throw new Error("Invalid email or password");
-      }
-
-      const tempUser = existingUser as AuthUser;
-      setUser(tempUser);
-      localStorage.setItem("auth_user", JSON.stringify(tempUser));
-    } finally {
-      setIsLoading(false);
+    if (error) {
+      throw new Error(error.message);
     }
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    setIsLoading(true);
-    try {
-      if (!email || !password || !name) {
-        throw new Error("All fields are required");
-      }
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+        },
+      },
+    });
 
-      if (password.length < 6) {
-        throw new Error("Password must be at least 6 characters");
-      }
-
-      // Check if user already exists
-      const storedUsers = JSON.parse(localStorage.getItem("app_users") || "{}");
-      if (Object.values(storedUsers).some((u: any) => u.email === email)) {
-        throw new Error("User already exists");
-      }
-
-      // Create new user
-      const newUser: AuthUser = {
-        id: Math.random().toString(36).substring(7),
-        email,
-        name,
-      };
-
-      // Store in temporary app users
-      storedUsers[newUser.id] = newUser;
-      localStorage.setItem("app_users", JSON.stringify(storedUsers));
-
-      // Set authenticated user
-      setUser(newUser);
-      localStorage.setItem("auth_user", JSON.stringify(newUser));
-    } finally {
-      setIsLoading(false);
+    if (error) {
+      throw new Error(error.message);
     }
   };
 
-  const signInWithGoogle = async () => {
-    setIsLoading(true);
-    try {
-      // Temporary: Mock Google authentication
-      // In production, this will call real Supabase OAuth
-      const mockUser: AuthUser = {
-        id: Math.random().toString(36).substring(7),
-        email: `user_${Date.now()}@gmail.com`,
-        name: "Google User",
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=google",
-      };
-      setUser(mockUser);
-      localStorage.setItem("auth_user", JSON.stringify(mockUser));
-    } finally {
-      setIsLoading(false);
-    }
+  const handleGoogleSignIn = async () => {
+    await signInWithGoogle();
   };
 
-  const logout = async () => {
-    setIsLoading(true);
-    try {
-      setUser(null);
-      localStorage.removeItem("auth_user");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleLogout = async () => {
+    await signOut();
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoading,
-        isAuthenticated: !!user,
-        signIn,
-        signUp,
-        signInWithGoogle,
-        logout,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo<AuthContextType>(
+    () => ({
+      user,
+      session,
+      isLoading,
+      isAuthenticated: !!session,
+      signIn,
+      signUp,
+      signInWithGoogle: handleGoogleSignIn,
+      logout: handleLogout,
+    }),
+    [user, session, isLoading],
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (context === undefined) {
+
+  if (!context) {
     throw new Error("useAuth must be used within AuthProvider");
   }
+
   return context;
 }

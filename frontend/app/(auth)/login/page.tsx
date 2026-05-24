@@ -28,7 +28,7 @@ export default function LoginPage() {
       setIsSigningIn(true);
       await signIn(email, password);
       toast.success("Signed in successfully!");
-      router.push("/");
+      router.replace("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
     } finally {
@@ -40,8 +40,6 @@ export default function LoginPage() {
     try {
       setIsSigningIn(true);
       await signInWithGoogle();
-      toast.success("Signed in with Google!");
-      router.push("/");
     } catch (error: any) {
       toast.error(error.message || "Failed to sign in with Google");
     } finally {

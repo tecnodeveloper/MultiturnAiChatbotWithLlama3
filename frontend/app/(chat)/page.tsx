@@ -42,13 +42,15 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.replace("/login");
     } else {
       // Load chats from localStorage
       const savedChats = localStorage.getItem("chats");
       if (savedChats) {
         try {
-          setChats(JSON.parse(savedChats));
+          const parsedChats = JSON.parse(savedChats);
+          setChats(parsedChats);
+          setCurrentChatId(parsedChats[0]?.id || null);
         } catch (e) {
           console.error("Failed to load chats:", e);
         }
@@ -88,7 +90,7 @@ export default function ChatPage() {
     try {
       await logout();
       toast.success("Logged out successfully");
-      router.push("/login");
+      router.replace("/login");
     } catch (error) {
       toast.error("Failed to logout");
     }
@@ -287,7 +289,8 @@ export default function ChatPage() {
                     Start Your Conversation
                   </h2>
                   <p className="text-gray-500 dark:text-gray-400 max-w-sm">
-                    Welcome to MultiTurn AI powered by LLaMA 3. Ask anything and get intelligent responses.
+                    Welcome to MultiTurn AI powered by LLaMA 3. Ask anything and
+                    get intelligent responses.
                   </p>
                 </div>
               ) : (
@@ -362,7 +365,8 @@ export default function ChatPage() {
                 </Button>
               </form>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
-                MultiTurn AI can make mistakes. Please verify important information.
+                MultiTurn AI can make mistakes. Please verify important
+                information.
               </p>
             </div>
           </>

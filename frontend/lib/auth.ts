@@ -1,25 +1,23 @@
-import { createClient } from "@/lib/supabase";
-
 export async function signInWithGoogle() {
-  const supabase = await createClient();
-  const redirectURL = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/auth/callback`;
-
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: redirectURL,
-    },
+  const response = await fetch("/api/auth/google", {
+    method: "POST",
   });
 
-  if (data.url) {
-    return { url: data.url };
+  const data = (await response.json()) as { url?: string; error?: string };
+
+  if (!response.ok || !data.url) {
+    throw new Error(data.error || "Failed to sign in with Google");
   }
 
-  return { error: error?.message || "Failed to sign in with Google" };
+  window.location.assign(data.url);
 }
 
 export async function signOut() {
-  const supabase = await createClient();
+  const { createBrowserSupabaseClient } = await import("@/lib/supabase");
+  const supabase = createBrowserSupabaseClient();
   const { error } = await supabase.auth.signOut();
-  return { error: error?.message };
+
+  if (error) {
+    throw new Error(error.message);
+  }
 }

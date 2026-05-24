@@ -8,11 +8,11 @@ import { toast } from "sonner";
 
 export default function DashboardPage() {
   const router = useRouter();
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, isLoading, logout } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/login");
+      router.replace("/login");
     }
   }, [isAuthenticated, router]);
 
@@ -20,12 +20,20 @@ export default function DashboardPage() {
     try {
       await logout();
       toast.success("Logged out successfully");
-      router.push("/login");
+      router.replace("/login");
     } catch (error) {
       toast.error("Failed to logout");
       console.error(error);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return null;

@@ -1,8 +1,18 @@
-// Auth route group - login, signup, callback routes will be added in Phase 2
-export default function AuthLayout({
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import type { ReactNode } from "react";
+
+export default async function AuthLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: ReactNode;
 }) {
-  return <>{children}</>
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getSession();
+
+  if (data.session) {
+    redirect("/dashboard");
+  }
+
+  return <>{children}</>;
 }

@@ -177,33 +177,38 @@ Build Phase 1 of a multi-turn AI chatbot system using:
 ### ✅ COMPLETED
 
 **Frontend Setup:**
+
 - ✅ Next.js 16.2.6 build successful (Turbopack)
 - ✅ TypeScript strict mode fully passing
 - ✅ All 580 npm packages installed
 - ✅ Dev server running on localhost:3000
 
 **UI Components (8 components):**
+
 - ✅ Button (6 variants)
 - ✅ Input, Label, Dialog, Avatar
 - ✅ Dropdown Menu, Sonner Toast
 - ✅ MultiTurn AI Brand component
 
 **Authentication Pages:**
+
 - ✅ /login - Google OAuth + email/password form
 - ✅ /signup - Google OAuth registration form
 - ✅ /api/auth/google - OAuth initiation route
 - ✅ /api/auth/callback - OAuth callback handler
 
 **Utilities & Config:**
+
 - ✅ Supabase SSR client (server + browser)
 - ✅ Auth helper functions
 - ✅ Tailwind CSS with MultiTurn AI blue (#0055FF)
 - ✅ Dark/Light mode via next-themes
-- ✅ TypeScript paths alias (@/*)
+- ✅ TypeScript paths alias (@/\*)
 - ✅ Root layout with Providers
 - ✅ Middleware with auth context
 
 **Dependencies Added:**
+
 - Radix UI (11 packages) for accessible components
 - @supabase/ssr, @supabase/supabase-js
 - next-themes, framer-motion, sonner
@@ -213,12 +218,14 @@ Build Phase 1 of a multi-turn AI chatbot system using:
 - @radix-ui/react-icons
 
 **Bug Fixes Applied:**
+
 - Fixed missing @radix-ui/react-icons package
 - Fixed TypeScript errors in supabase.ts (type annotation for cookiesToSet)
 - Fixed NextResponse import in middleware.ts
 - All TypeScript strict mode errors resolved
 
 **Files Modified:**
+
 - frontend/lib/supabase.ts - Added proper type annotations
 - frontend/middleware.ts - Fixed Next.js 16 import compatibility
 
@@ -235,12 +242,14 @@ Build Phase 1 of a multi-turn AI chatbot system using:
 - [ ] Settings panel
 
 ### Key Metrics
+
 - **TypeScript Errors**: 0 ✅
 - **Build Time**: 4.8s
 - **Package Vulnerabilities**: 7 (to be addressed)
 - **Dev Server Status**: Running ✅
 
 ### Commands Ready
+
 ```bash
 npm run dev       # Start dev server
 npm run build     # Production build
@@ -250,6 +259,7 @@ npm run format:write # Format code
 ```
 
 ### Frontend Verified
+
 - ✅ Builds without errors
 - ✅ Types check passing
 - ✅ All components created
@@ -261,6 +271,7 @@ npm run format:write # Format code
 ### ✅ Google Button Redesign
 
 **Changes Made:**
+
 - Repositioned "Continue with Google" button to appear AFTER Sign In/Sign Up button
 - Added "OR" divider between email form and Google OAuth
 - Updated button styling for consistency:
@@ -271,10 +282,12 @@ npm run format:write # Format code
   - Google icon + text layout
 
 **Files Updated:**
+
 - frontend/app/(auth)/login/page.tsx
 - frontend/app/(auth)/signup/page.tsx
 
 **Button Order (New):**
+
 1. Email & Password form
 2. Sign In / Sign Up button (blue)
 3. "OR" divider
@@ -282,6 +295,7 @@ npm run format:write # Format code
 5. Link to other auth page
 
 **Design Matching:**
+
 - ✅ Matches chatbot-ui reference design
 - ✅ White button with Google icon
 - ✅ Positioned after primary action button
@@ -289,6 +303,7 @@ npm run format:write # Format code
 - ✅ Fully responsive mobile design
 
 **Build Status:**
+
 - ✅ TypeScript: 0 errors
 - ✅ Next.js Build: Successful
 - ✅ All routes compiled correctly
@@ -298,23 +313,27 @@ npm run format:write # Format code
 ### ✅ Logo Text Removed
 
 **Changes:**
+
 - Removed "MultiTurn AI Chatbot using Llama 3" text from logo
 - Logo now displays as **icon only** (clean, modern look)
 - Logo centered at top of auth pages
 
 **Files Updated:**
+
 - frontend/app/(auth)/login/page.tsx - Brand showText: false
 - frontend/app/(auth)/signup/page.tsx - Brand showText: false
 
 ### ✅ Google Button Modern Design
 
 **New Hover Effect:**
+
 - Old: Plain gray hover (hover:bg-slate-100)
 - New: Modern gradient hover (from-blue-50 to-indigo-50)
 - Smooth transition animation (transition-all duration-200)
 - Professional blue-to-purple gradient on hover
 
 **Button Styling:**
+
 - Background: White (bg-white)
 - Text: Dark slate (text-slate-900)
 - Border: Light slate (border-slate-300)
@@ -322,10 +341,12 @@ npm run format:write # Format code
 - Transition: Smooth 200ms animation
 
 **Files Updated:**
+
 - frontend/app/(auth)/login/page.tsx
 - frontend/app/(auth)/signup/page.tsx
 
 ### Current Design Flow:
+
 1. **Logo** - Clean icon only (no text)
 2. **Heading** - "Welcome Back" or "Create Account"
 3. **Form** - Email & Password fields
@@ -335,6 +356,7 @@ npm run format:write # Format code
 7. **Footer Link** - Link to other auth page
 
 ### Build Status:
+
 - ✅ TypeScript: 0 errors
 - ✅ Next.js Build: Successful
 - ✅ All routes compiled
@@ -345,11 +367,13 @@ npm run format:write # Format code
 ### ✅ UI Enhancements
 
 **Logo Sizing:**
+
 - Added extra-large size (xl: 120x120px) to Brand component
 - Logo now displayed prominently on login/signup pages
 - Logo text hidden for clean, minimal design
 
 **Google Button Modern Design:**
+
 - Enhanced hover animation with blue-indigo gradient (from-blue-50 to-indigo-50)
 - Added smooth shadow effect (hover:shadow-lg with blue tint)
 - Dark mode support with proper shadow colors
@@ -359,18 +383,21 @@ npm run format:write # Format code
 ### ✅ Authentication System Implemented
 
 **Auth Context Created:**
+
 - Centralized auth state management with React Context
 - Session persistence using localStorage
 - Temporary mock authentication ready for production Supabase integration
 - Clean abstraction layer for future Google OAuth integration
 
 **Auth Methods:**
+
 - signIn(email, password) - Email-based login
 - signUp(email, password, name) - Email-based signup with name field
 - signInWithGoogle() - Temporary mock OAuth redirect
 - logout() - Session cleanup
 
 **Session Management:**
+
 - User data persisted in localStorage
 - Session restored on page reload
 - Auth state available globally via useAuth() hook
@@ -379,12 +406,14 @@ npm run format:write # Format code
 ### ✅ Routes & Protected Pages
 
 **Login Page:** /login
+
 - Email & password form
 - Improved Google button with modern hover effects
 - Redirects to dashboard on successful auth
 - Link to signup page
 
 **Signup Page:** /signup
+
 - Name, email, password form with validation
 - Password confirmation matching
 - Improved Google button
@@ -392,6 +421,7 @@ npm run format:write # Format code
 - Link to login page
 
 **Dashboard Page:** /dashboard
+
 - Protected route (redirects to login if not authenticated)
 - Displays user profile information
 - Shows email, name, and user ID
@@ -401,12 +431,14 @@ npm run format:write # Format code
 ### ✅ Temporary Google OAuth Redirect
 
 **Current Implementation:**
+
 - When user clicks "Continue with Google", simulates successful auth
 - Creates mock user session
 - Redirects to /dashboard
 - Works without Supabase Google OAuth config
 
 **Future Integration:**
+
 - Architecture ready for real Supabase OAuth
 - Mock implementation will be replaced with actual Supabase signInWithOAuth
 - No messy hardcoded logic - clean service layer
@@ -423,6 +455,7 @@ npm run format:write # Format code
 ### ✅ COMPLETED - Dashboard Pages & Chat Interface
 
 **Main Chat Page (/page.tsx):**
+
 - ✅ Redesigned with chatbot-ui inspired layout
 - ✅ Sidebar with collapsible toggle (w-64 or w-20)
 - ✅ Chat history list with individual chat items
@@ -439,6 +472,7 @@ npm run format:write # Format code
 - ✅ Dark mode support throughout
 
 **Chat Features:**
+
 - Multiple independent chats stored in localStorage
 - Auto-generate chat titles from first user message
 - Chat persistence across page reloads
@@ -448,6 +482,7 @@ npm run format:write # Format code
 - Typing indicators during AI response
 
 **Input Area:**
+
 - Placeholder: "Message MultiTurn AI..."
 - Send button with icon
 - Disabled state when loading
@@ -455,6 +490,7 @@ npm run format:write # Format code
 - Full-width responsive layout
 
 **Sidebar Components:**
+
 - Brand logo (uses Brand component with md size)
 - Menu toggle button (hamburger menu)
 - New Chat button (when sidebar open)
@@ -466,6 +502,7 @@ npm run format:write # Format code
 - Compact mode when sidebar collapsed
 
 **Message Styling:**
+
 - User messages: Blue background (bg-blue-600), right-aligned, white text
 - Assistant messages: Gray background (bg-gray-100 dark:bg-gray-800), left-aligned
 - Proper border radius with message bubble style (rounded-br-none for user, rounded-bl-none for assistant)
@@ -476,6 +513,7 @@ npm run format:write # Format code
 ### ✅ Authentication Pages Complete
 
 **Login Page (/login):**
+
 - ✅ Email & password form
 - ✅ Google OAuth button with modern design
 - ✅ Proper error handling and validation
@@ -483,6 +521,7 @@ npm run format:write # Format code
 - ✅ Link to signup page
 
 **Signup Page (/signup):**
+
 - ✅ Name, email, password fields
 - ✅ Password confirmation validation
 - ✅ Google OAuth button
@@ -493,6 +532,7 @@ npm run format:write # Format code
 ### ✅ User Management Complete
 
 **Signup Validation:**
+
 - Checks all fields required
 - Validates password length (min 6 chars)
 - Prevents duplicate email registration
@@ -500,12 +540,14 @@ npm run format:write # Format code
 - Stores user in localStorage under "app_users"
 
 **Signin Validation:**
+
 - Validates user exists in database
 - Shows error: "Invalid email or password" if user not found
 - Session creation on successful login
 - Redirects authenticated users to chat
 
 **Session Management:**
+
 - User stored in "auth_user" localStorage key
 - Restored on page reload
 - Logout clears session completely
@@ -514,60 +556,70 @@ npm run format:write # Format code
 ### ✅ Application Routes Complete
 
 **Route Structure:**
+
 ```
-/                  → Chat interface (protected)
+/                  → Auth landing redirect
 /login            → Login page (public)
 /signup           → Signup page (public)
-/dashboard        → (deprecated, replaced by main chat page)
+/dashboard        → Protected dashboard/chat experience
 /api/auth/google  → OAuth initiation
 /api/auth/callback → OAuth callback
 ```
 
 **Protected Routes:**
-- Chat page (/) requires authentication
-- Automatically redirects to /login if not authenticated
-- Session persists across page reloads
+
+- `/dashboard` requires authentication
+- Authenticated users are redirected from `/`, `/login`, and `/signup` to `/dashboard`
+- Unauthenticated users are redirected from `/dashboard` to `/login`
+- Sessions persist through Supabase cookies and middleware refresh
 
 ### 🔄 Build Status
+
 - ✅ TypeScript: 0 errors
-- ✅ All components properly typed
-- ✅ Chat interface fully functional
-- ✅ All pages created and configured
-- ✅ Ready for production build
+- ✅ Frontend build: successful
+- ✅ Route tree: `/`, `/login`, `/signup`, `/dashboard`
+- ✅ OAuth callback resolves to `/dashboard`
 
 ### 📝 Files Created/Modified This Session
 
 **Created:**
-- frontend/lib/user-service.ts - User validation service (for future Supabase integration)
+
+- `frontend/lib/supabase/server.ts` - server Supabase helper
 
 **Modified:**
-- frontend/app/(chat)/page.tsx - Complete dashboard redesign with sidebar, chat history, and message rendering
-- frontend/context/auth-context.tsx - Updated auth logic with proper user validation
-- frontend/app/(auth)/login/page.tsx - Updated redirects to use "/" instead of "/dashboard"
-- frontend/app/(auth)/signup/page.tsx - Updated redirects to use "/" instead of "/dashboard"
+
+- `frontend/app/page.tsx` - root session-aware redirect
+- `frontend/app/(auth)/layout.tsx` - redirect authenticated users to `/dashboard`
+- `frontend/app/(chat)/layout.tsx` - protect dashboard routes
+- `frontend/app/api/auth/google/route.ts` - Google OAuth URL generation
+- `frontend/app/api/auth/callback/route.ts` - callback redirect now targets `/dashboard`
+- `frontend/context/auth-context.tsx` - Supabase-backed auth state
+- `frontend/lib/auth.ts` - Google sign-in and logout helpers
+- `frontend/lib/supabase.ts` - browser Supabase client only
+- `frontend/lib/user-service.ts` - server Supabase import cleanup
+- `frontend/app/(auth)/login/page.tsx` - redirect to `/dashboard`
+- `frontend/app/(auth)/signup/page.tsx` - redirect to `/dashboard`
+- `frontend/app/(chat)/dashboard/page.tsx` - protected dashboard loading-state cleanup
+- `frontend/middleware.ts` - auth guards and redirects
 
 ### ✅ What's Complete
+
 - [x] Authentication flow (signup/signin/logout)
-- [x] User validation (prevents anyone from logging in)
-- [x] Session management (persistence and protection)
-- [x] Chat dashboard redesigned to match chatbot-ui
-- [x] Sidebar with collapsible toggle
-- [x] Chat history management
-- [x] Message rendering with proper styling
-- [x] User profile display
-- [x] Model selector
-- [x] Loading states and animations
+- [x] Supabase session handling
+- [x] Authenticated route protection
+- [x] Root route redirect logic
+- [x] Login/signup redirect to `/dashboard`
+- [x] Dashboard shell preserved and protected
 - [x] Dark mode support
 - [x] Responsive design
-- [x] All routes configured
-- [x] Protected routes working
+- [x] Google OAuth initiation and callback
+- [x] Build verification
 
 ### ⏳ Pending Tasks
-- [ ] Build verification (npm run build)
-- [ ] Dev server testing
-- [ ] Supabase integration (move from localStorage to actual database)
-- [ ] Real Google OAuth configuration
-- [ ] AI API integration (OpenRouter/Grok)
-- [ ] Feedback collection modal
-- [ ] Analytics dashboard
-- [ ] Backend API completion
+
+- [ ] Replace remaining localStorage chat storage with Supabase persistence
+- [ ] Add Supabase schema/migrations for users, sessions, chats, messages, feedback
+- [ ] Polish dashboard to more closely mirror chatbot-ui component-by-component
+- [ ] Add feedback modal after 6 messages
+- [ ] Add AI provider switching UI and offline logic
+- [ ] Add optional PWA support

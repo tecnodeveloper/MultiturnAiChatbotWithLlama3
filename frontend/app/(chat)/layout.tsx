@@ -1,16 +1,18 @@
-import { ReactNode } from 'react'
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
+import type { ReactNode } from "react";
 
-export default function ChatLayout({
+export default async function ChatLayout({
   children,
 }: {
-  children: ReactNode
+  children: ReactNode;
 }) {
-  return (
-    <div className="flex h-screen">
-      {/* Sidebar will be added in Phase 3 */}
-      <main className="flex-1">
-        {children}
-      </main>
-    </div>
-  )
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getSession();
+
+  if (!data.session) {
+    redirect("/login");
+  }
+
+  return <div className="min-h-screen bg-background">{children}</div>;
 }
