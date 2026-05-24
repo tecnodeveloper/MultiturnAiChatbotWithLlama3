@@ -28,10 +28,9 @@ export default function LoginPage() {
       setIsSigningIn(true);
       await signIn(email, password);
       toast.success("Signed in successfully!");
-      router.push("/dashboard");
-    } catch (error) {
-      toast.error("Failed to sign in");
-      console.error(error);
+      router.push("/");
+    } catch (error: any) {
+      toast.error(error.message || "Invalid email or password");
     } finally {
       setIsSigningIn(false);
     }
@@ -42,10 +41,9 @@ export default function LoginPage() {
       setIsSigningIn(true);
       await signInWithGoogle();
       toast.success("Signed in with Google!");
-      router.push("/dashboard");
-    } catch (error) {
-      toast.error("Failed to sign in with Google");
-      console.error(error);
+      router.push("/");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign in with Google");
     } finally {
       setIsSigningIn(false);
     }

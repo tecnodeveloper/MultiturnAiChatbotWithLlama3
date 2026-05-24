@@ -41,10 +41,9 @@ export default function SignupPage() {
       setIsSigningUp(true);
       await signUp(email, password, name);
       toast.success("Account created successfully!");
-      router.push("/dashboard");
-    } catch (error) {
-      toast.error("Failed to create account");
-      console.error(error);
+      router.push("/");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to create account");
     } finally {
       setIsSigningUp(false);
     }
@@ -55,10 +54,9 @@ export default function SignupPage() {
       setIsSigningUp(true);
       await signInWithGoogle();
       toast.success("Signed up with Google!");
-      router.push("/dashboard");
-    } catch (error) {
-      toast.error("Failed to sign up with Google");
-      console.error(error);
+      router.push("/");
+    } catch (error: any) {
+      toast.error(error.message || "Failed to sign up with Google");
     } finally {
       setIsSigningUp(false);
     }
