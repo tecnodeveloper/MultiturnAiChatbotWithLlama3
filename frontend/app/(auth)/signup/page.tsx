@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth-context";
 import { Brand } from "@/components/ui/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,43 +11,56 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const { signUp, signInWithGoogle, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [name, setName] = useState("");
+  const [isSigningUp, setIsSigningUp] = useState(false);
 
-  const handleGoogleSignUp = async () => {
-    try {
-      setIsLoading(true);
-      const response = await fetch("/api/auth/google", { method: "POST" });
-      const data = await response.json();
-
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        toast.error(data.error || "Failed to sign up with Google");
-      }
-    } catch (error) {
-      toast.error("An error occurred during sign up");
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email || !password || !confirmPassword || !name) {
+      toast.error("Please fill in all fields");
+      return;
+    }
 
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
     }
 
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
     try {
-      setIsLoading(true);
-      toast.info("Email sign up coming soon. Use Google Sign-In for now.");
+      setIsSigningUp(true);
+      await signUp(email, password, name);
+      toast.success("Account created successfully!");
+      router.push("/dashboard");
+    } catch (error) {
+      toast.error("Failed to create account");
+      console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsSigningUp(false);
+    }
+  };
+
+  const handleGoogleSignUp = async () => {
+    try {
+      setIsSigningUp(true);
+      await signInWithGoogle();
+      toast.success("Signed up with Google!");
+      router.push("/dashboard");
+    } catch (error) {
+      toast.error("Failed to sign up with Google");
+      console.error(error);
+    } finally {
+      setIsSigningUp(false);
     }
   };
 
@@ -64,7 +79,20 @@ export default function SignupPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleEmailSignUp} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                disabled={isSigningUp || isLoading}
+              />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
               <Input
@@ -74,7 +102,7 @@ export default function SignupPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={isLoading}
+                disabled={isSigningUp || isLoading}
               />
             </div>
 
@@ -87,7 +115,7 @@ export default function SignupPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={isLoading}
+                disabled={isSigningUp || isLoading}
               />
             </div>
 
@@ -100,17 +128,17 @@ export default function SignupPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                disabled={isLoading}
+                disabled={isSigningUp || isLoading}
               />
             </div>
 
             <Button
               type="submit"
-              disabled={isLoading}
+              disabled={isSigningUp || isLoading}
               className="w-full"
               size="lg"
             >
-              {isLoading ? "Creating account..." : "Sign Up"}
+              {isSigningUp ? "Creating account..." : "Sign Up"}
             </Button>
           </form>
 
@@ -127,7 +155,7 @@ export default function SignupPage() {
 
           <Button
             onClick={handleGoogleSignUp}
-            disabled={isLoading}
+            disabled={isSigningUp || isLoading}
             className="w-full h-11 gap-2 bg-white text-slate-900 border border-slate-300 shadow-md hover:shadow-lg hover:shadow-blue-200 dark:hover:shadow-blue-900 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-300 group"
             variant="outline"
           >
