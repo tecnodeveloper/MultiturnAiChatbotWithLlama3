@@ -1,7 +1,12 @@
 "use client";
 
 import { createBrowserSupabaseClient } from "@/lib/supabase";
-import { signInWithGoogle, signOut } from "@/lib/auth";
+import {
+  signInWithEmail,
+  signInWithGoogle,
+  signOut,
+  signUpWithEmail,
+} from "@/lib/auth";
 import type { Session, User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
@@ -88,30 +93,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      throw new Error(error.message);
-    }
+    await signInWithEmail(email, password);
+    // Let the onAuthStateChange subscription handle session updates
+    // Add a small delay to allow cookies to be fully set
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const { data } = await supabase.auth.getSession();
+    setSession(data.session);
+    setUser(mapUser(data.session?.user ?? null));
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name,
-        },
-      },
-    });
-
-    if (error) {
-      throw new Error(error.message);
-    }
+    await signUpWithEmail(email, password, name);
+    // Let the onAuthStateChange subscription handle session updates
+    // Add a small delay to allow cookies to be fully set
+    await new Promise(resolve => setTimeout(resolve, 100));
+    const { data } = await supabase.auth.getSession();
+    setSession(data.session);
+    setUser(mapUser(data.session?.user ?? null));
   };
 
   const handleGoogleSignIn = async () => {

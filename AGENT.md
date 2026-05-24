@@ -241,6 +241,22 @@ Build Phase 1 of a multi-turn AI chatbot system using:
 - [ ] Dark mode toggle button
 - [ ] Settings panel
 
+### 🔧 Auth Route Cleanup (May 24, 2026)
+
+#### ✅ COMPLETED
+
+- Removed duplicate session checks from `frontend/app/(auth)/layout.tsx` and `frontend/app/(chat)/layout.tsx`
+- Simplified `frontend/app/page.tsx` to rely on middleware for root routing
+- Deleted the redundant redirect-only `frontend/app/(chat)/page.tsx`
+- Consolidated route protection to avoid dashboard reload loops in `npm run dev`
+
+#### Files Modified
+
+- `frontend/app/(auth)/layout.tsx`
+- `frontend/app/(chat)/layout.tsx`
+- `frontend/app/page.tsx`
+- `frontend/app/(chat)/page.tsx`
+
 ### Key Metrics
 
 - **TypeScript Errors**: 0 ✅
@@ -454,7 +470,7 @@ npm run format:write # Format code
 
 ### ✅ COMPLETED - Dashboard Pages & Chat Interface
 
-**Main Chat Page (/page.tsx):**
+**Main Dashboard Page (/dashboard):**
 
 - ✅ Redesigned with chatbot-ui inspired layout
 - ✅ Sidebar with collapsible toggle (w-64 or w-20)
@@ -462,7 +478,7 @@ npm run format:write # Format code
 - ✅ Delete chat functionality with hover reveal
 - ✅ New Chat button with + icon
 - ✅ User info display (name + email in sidebar footer)
-- ✅ Model selector dropdown (LLaMA 3 / Grok / OpenRouter)
+- ✅ Model selector dropdown (Groq / OpenRouter / Ollama)
 - ✅ Message rendering with user/assistant differentiation
 - ✅ AI avatar (blue badge with "AI" text)
 - ✅ Copy button for assistant messages
@@ -473,7 +489,7 @@ npm run format:write # Format code
 
 **Chat Features:**
 
-- Multiple independent chats stored in localStorage
+- Multiple independent chats stored in localStorage (temporary until Supabase persistence lands)
 - Auto-generate chat titles from first user message
 - Chat persistence across page reloads
 - Current chat tracking and switching
@@ -517,7 +533,7 @@ npm run format:write # Format code
 - ✅ Email & password form
 - ✅ Google OAuth button with modern design
 - ✅ Proper error handling and validation
-- ✅ Redirects to chat page (/) on success
+- ✅ Redirects to /dashboard on success
 - ✅ Link to signup page
 
 **Signup Page (/signup):**
@@ -526,7 +542,7 @@ npm run format:write # Format code
 - ✅ Password confirmation validation
 - ✅ Google OAuth button
 - ✅ Proper error messages
-- ✅ Redirects to chat page (/) on success
+- ✅ Redirects to /dashboard on success
 - ✅ Link to login page
 
 ### ✅ User Management Complete
@@ -548,7 +564,7 @@ npm run format:write # Format code
 
 **Session Management:**
 
-- User stored in "auth_user" localStorage key
+- User stored in Supabase session cookie
 - Restored on page reload
 - Logout clears session completely
 - Protected routes redirect to /login if not authenticated
@@ -623,3 +639,19 @@ npm run format:write # Format code
 - [ ] Add feedback modal after 6 messages
 - [ ] Add AI provider switching UI and offline logic
 - [ ] Add optional PWA support
+
+## Auth Session Sync Fix (May 24, 2026 - Session 5)
+
+### ✅ Fixed
+
+- Moved email/password auth to server route handlers so cookies are set consistently
+- Added `/api/auth/login`, `/api/auth/signup`, and `/api/auth/logout`
+- Added shared `frontend/lib/supabase/route.ts` helper for route-handler sessions
+- Kept `/dashboard` protected while avoiding the refresh loop from client/server session mismatch
+
+### ✅ Verified
+
+- Root `/` still resolves to auth flow
+- Successful auth redirects to `/dashboard`
+- `/dashboard` no longer bounces during normal authenticated navigation
+- Frontend build passes after the auth-session sync fix
