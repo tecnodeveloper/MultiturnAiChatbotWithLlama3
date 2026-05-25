@@ -15,14 +15,14 @@ app.secret_key = os.urandom(24)
 CORS(app)
 
 # Configuration - Use environment variable for API key
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY environment variable not set. Set it before running the app.")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY") or os.getenv("NEXT_PUBLIC_GROQ_API_KEY") or ""
 MODEL = "llama-3.3-70b-versatile"
 DB_PATH = "chatbot.db"
 
 # Initialize Groq client
-client = Groq(api_key=GROQ_API_KEY)
+client = None
+if GROQ_API_KEY:
+    client = Groq(api_key=GROQ_API_KEY)
 
 # Initialize database
 def init_db():
@@ -129,6 +129,9 @@ def chat():
     
     if not user_message or not session_id:
         return jsonify({"error": "Missing message or session_id"}), 400
+
+    if not client:
+        return jsonify({"error": "Groq API key not found. Please set GROQ_API_KEY environment variable."}), 500
     
     save_message(session_id, 'user', user_message)
     

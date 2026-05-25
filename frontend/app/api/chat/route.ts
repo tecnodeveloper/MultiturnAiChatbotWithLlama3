@@ -6,23 +6,25 @@ export const runtime = "edge";
 export async function POST(req: Request) {
   try {
     const { messages, provider, fileContexts } = await req.json();
+    console.log("Chat API Request - Provider:", provider);
+    console.log("OLLAMA_URL env:", process.env.OLLAMA_URL);
 
     let apiKey = "";
     let baseURL = "";
     let model = "";
 
     if (provider === "Groq") {
-      apiKey = process.env.GROQ_API_KEY || "";
+      apiKey = process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY || "";
       baseURL = "https://api.groq.com/openai/v1";
       model = "llama-3.3-70b-versatile";
     } else if (provider === "OpenRouter") {
-      apiKey = process.env.OPENROUTER_API_KEY || "";
+      apiKey = process.env.OPENROUTER_API_KEY || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || "";
       baseURL = "https://openrouter.ai/api/v1";
       model = "meta-llama/llama-3.3-70b-instruct";
     } else if (provider === "Ollama") {
       apiKey = "ollama";
       baseURL = process.env.OLLAMA_URL || "http://localhost:11434/v1";
-      model = "llama3";
+      model = "llama3:latest";
     }
 
     if (!apiKey && provider !== "Ollama") {
@@ -54,7 +56,7 @@ export async function POST(req: Request) {
       temperature: 0.7,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error: any) {
     console.error("Chat API Error:", error);
     return new Response(JSON.stringify({ error: error.message }), {

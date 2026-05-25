@@ -231,15 +231,12 @@ Build Phase 1 of a multi-turn AI chatbot system using:
 
 ### ⏳ NEXT PHASE (Phase 3-4)
 
-- [ ] Supabase schema creation (users, sessions, messages, feedback)
-- [ ] Chat dashboard layout (sidebar + main area)
-- [ ] Chat message components
-- [ ] Message sending/receiving API
-- [ ] User profile creation on OAuth signup
-- [ ] Route protection middleware
-- [ ] Animated feedback modal (after 6 messages)
-- [ ] Dark mode toggle button
-- [ ] Settings panel
+- [x] Supabase schema creation (users, sessions, messages, feedback)
+- [x] Replace remaining localStorage chat storage with Supabase persistence
+- [ ] Polish dashboard to more closely mirror chatbot-ui component-by-component
+- [ ] Add feedback modal after 6 messages
+- [ ] Add AI provider switching UI and offline logic
+- [ ] Add optional PWA support
 
 ### 🔧 Auth Route Cleanup (May 24, 2026)
 
@@ -633,8 +630,8 @@ npm run format:write # Format code
 
 ### ⏳ Pending Tasks
 
-- [ ] Replace remaining localStorage chat storage with Supabase persistence
-- [ ] Add Supabase schema/migrations for users, sessions, chats, messages, feedback
+- [x] Replace remaining localStorage chat storage with Supabase persistence
+- [x] Add Supabase schema/migrations for users, sessions, chats, messages, feedback
 - [ ] Polish dashboard to more closely mirror chatbot-ui component-by-component
 - [ ] Add feedback modal after 6 messages
 - [ ] Add AI provider switching UI and offline logic
