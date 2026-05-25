@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import { toast } from "sonner";
 import { Brand } from "@/components/ui/brand";
 
 export default function SignupPage() {
-  const router = useRouter();
   const { signUp, signInWithGoogle, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,8 +39,7 @@ export default function SignupPage() {
     try {
       setIsSigningUp(true);
       await signUp(email, password);
-      // Use window.location.href for a full reload to ensure cookies are fresh
-      window.location.href = "/dashboard";
+      window.location.assign("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");
     } finally {

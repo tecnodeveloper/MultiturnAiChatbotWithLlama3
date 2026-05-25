@@ -59,8 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const initialize = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(mapUser(data.user ?? null));
+      const { data } = await supabase.auth.getSession();
+      setUser(mapUser(data.session?.user ?? null));
       setIsLoading(false);
     };
 
@@ -69,9 +69,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Listen for auth state changes (e.g., after login from another tab or route)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      const { data } = await supabase.auth.getUser();
-      setUser(mapUser(data.user ?? null));
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(mapUser(session?.user ?? null));
     });
 
     return () => {
