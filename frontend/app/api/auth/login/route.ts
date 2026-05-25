@@ -28,13 +28,5 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  // Force write cookies from request to response
-  const cookies = request.cookies.getAll();
-  cookies.forEach(({ name, value }) => {
-    if (name.startsWith("sb-")) {
-      response.cookies.set(name, value, { httpOnly: true, secure: true, sameSite: "lax", path: "/" });
-    }
-  });
-
   return response;
 }
