@@ -80,16 +80,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    await signInWithEmail(email, password);
-    // Re-fetch user to ensure auth context is in sync with server session
-    const { data } = await supabase.auth.getUser();
-    setUser(mapUser(data.user ?? null));
+    const userData = await signInWithEmail(email, password);
+    setUser(mapUser(userData));
   };
 
   const signUp = async (email: string, password: string, name?: string) => {
-    await signUpWithEmail(email, password, name || email.split("@")[0]);
-    const { data } = await supabase.auth.getUser();
-    setUser(mapUser(data.user ?? null));
+    const userData = await signUpWithEmail(email, password, name || email.split("@")[0]);
+    setUser(mapUser(userData));
   };
 
   const handleGoogleSignIn = async () => {

@@ -22,10 +22,13 @@ export async function signInWithEmail(email: string, password: string) {
     body: JSON.stringify({ email, password }),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    const data = await response.json();
     throw new Error(data.error || "Failed to sign in");
   }
+
+  return data.user;
 }
 
 export async function signUpWithEmail(
@@ -39,10 +42,13 @@ export async function signUpWithEmail(
     body: JSON.stringify({ email, password, name }),
   });
 
+  const data = await response.json();
+
   if (!response.ok) {
-    const data = await response.json();
     throw new Error(data.error || "Failed to sign up");
   }
+
+  return data.user;
 }
 
 export async function signOut() {

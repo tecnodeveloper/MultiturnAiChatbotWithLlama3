@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     headers: { "Content-Type": "application/json" },
   });
   const supabase = createRouteClient(request, response);
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
@@ -28,5 +28,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  return response;
+  // Return the user data with the cookies set in the response headers
+  return new NextResponse(JSON.stringify({ user: data.user }), {
+    status: 200,
+    headers: response.headers,
+  });
 }
