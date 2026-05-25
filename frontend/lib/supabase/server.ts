@@ -20,10 +20,12 @@ export async function createClient() {
           }>,
         ) {
           try {
+            console.log("Server Client: Setting cookies", cookiesToSet.map(c => c.name));
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options),
             );
-          } catch {
+          } catch (err) {
+            console.error("Server Client: Failed to set cookies", err);
             // Server components cannot always write cookies directly.
           }
         },

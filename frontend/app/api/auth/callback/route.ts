@@ -13,6 +13,14 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return NextResponse.redirect(new URL(redirectTo, request.url));
     }
+    
+    console.error("Auth callback exchange error:", {
+      message: error.message,
+      status: error.status,
+      code: code.substring(0, 10) + "..."
+    });
+  } else {
+    console.error("No code found in callback URL");
   }
 
   return NextResponse.redirect(
