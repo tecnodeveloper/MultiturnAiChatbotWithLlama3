@@ -5,6 +5,11 @@ import { useChat } from "@/context/chat-context";
 import { SidebarSwitcher } from "./sidebar-switcher";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Trash2 } from "lucide-react";
+import { 
+  IconMessage, 
+  IconPencil, 
+  IconAdjustmentsHorizontal 
+} from "@tabler/icons-react";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/context/auth-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -50,75 +55,107 @@ export const Sidebar: FC<SidebarProps> = ({
     switch (contentType) {
       case "chats":
         return (
-          <div className="space-y-1">
+          <div className="space-y-2">
             {filteredChats.map((chat) => (
-              <button
+              <div
                 key={chat.id}
                 onClick={() => onSelectChat(chat.id)}
-                className={`group flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                  currentChatId === chat.id ? "bg-muted" : "hover:bg-muted/70"
+                className={`group relative flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-all ${
+                  currentChatId === chat.id 
+                    ? "bg-secondary font-medium" 
+                    : "hover:bg-muted/70"
                 }`}
               >
-                <span className="truncate">{chat.title}</span>
-                <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                  <Trash2
-                    className="h-3.5 w-3.5 hover:text-destructive"
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <IconMessage size={18} className="text-muted-foreground shrink-0" />
+                  <span className="truncate">{chat.title}</span>
+                </div>
+                <div className="flex items-center opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
                     onClick={(e) => {
                       e.stopPropagation();
                       onDeleteChat(chat.id);
                     }}
-                  />
-                </span>
-              </button>
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             ))}
+            {filteredChats.length === 0 && (
+              <div className="p-8 text-center text-sm text-muted-foreground italic">
+                No chats found.
+              </div>
+            )}
           </div>
         );
       case "prompts":
         return (
-          <div className="space-y-1">
+          <div className="space-y-2">
             {filteredPrompts.map((prompt) => (
-              <button
+              <div
                 key={prompt.id}
-                className="group flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-muted/70"
+                className="group relative flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-all hover:bg-muted/70"
               >
-                <span className="truncate">{prompt.name}</span>
-                <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                  <Trash2 className="h-3.5 w-3.5 hover:text-destructive" />
-                </span>
-              </button>
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <IconPencil size={18} className="text-muted-foreground shrink-0" />
+                  <span className="truncate">{prompt.name}</span>
+                </div>
+                <div className="flex items-center opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             ))}
             {filteredPrompts.length === 0 && (
-              <div className="p-4 text-center text-xs text-muted-foreground">
-                No prompts found. Click "New Prompt" to create one.
+              <div className="p-8 text-center text-sm text-muted-foreground italic">
+                No prompts found.
               </div>
             )}
           </div>
         );
       case "presets":
         return (
-          <div className="space-y-1">
+          <div className="space-y-2">
             {filteredPresets.map((preset) => (
-              <button
+              <div
                 key={preset.id}
-                className="group flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-muted/70"
+                className="group relative flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-all hover:bg-muted/70"
               >
-                <span className="truncate">{preset.name}</span>
-                <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                  <Trash2 className="h-3.5 w-3.5 hover:text-destructive" />
-                </span>
-              </button>
+                <div className="flex items-center gap-3 overflow-hidden">
+                  <IconAdjustmentsHorizontal size={18} className="text-muted-foreground shrink-0" />
+                  <span className="truncate">{preset.name}</span>
+                </div>
+                <div className="flex items-center opacity-0 transition-opacity group-hover:opacity-100">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
             ))}
             {filteredPresets.length === 0 && (
-              <div className="p-4 text-center text-xs text-muted-foreground">
-                No presets found. Click "New Preset" to create one.
+              <div className="p-8 text-center text-sm text-muted-foreground italic">
+                No presets found.
               </div>
             )}
           </div>
         );
       default:
         return (
-          <div className="flex h-full items-center justify-center text-sm text-muted-foreground italic">
-            {contentType.charAt(0).toUpperCase() + contentType.slice(1)} coming soon...
+          <div className="flex h-full items-center justify-center p-8 text-center text-sm text-muted-foreground italic">
+            {contentType.charAt(0).toUpperCase() + contentType.slice(1)} items coming soon...
           </div>
         );
     }
@@ -131,14 +168,25 @@ export const Sidebar: FC<SidebarProps> = ({
         onContentTypeChange={setContentType}
       />
 
-      <div className="flex w-[260px] flex-col overflow-hidden">
-        <div className="flex items-center gap-3 border-b border-border p-4 h-[60px]">
-          <Brand size="sm" />
+      <div className="flex w-[280px] flex-col overflow-hidden">
+        {/* Workspace/Brand Header */}
+        <div className="flex items-center justify-between border-b border-border p-3 h-[60px]">
+          <div className="flex items-center gap-2 font-bold">
+            <Brand size="sm" showText={false} />
+            <span className="text-sm">MultiTurn AI</span>
+          </div>
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <IconAdjustmentsHorizontal size={20} />
+          </Button>
         </div>
 
-        <div className="p-4 space-y-4">
-          <Button className="w-full justify-start gap-2" onClick={onNewChat}>
-            <Plus className="h-4 w-4" />
+        {/* Action Buttons & Search */}
+        <div className="p-4 space-y-3">
+          <Button 
+            className="w-full justify-start gap-3 bg-primary/10 text-primary hover:bg-primary/20 border-none shadow-none font-medium h-11" 
+            onClick={onNewChat}
+          >
+            <Plus className="h-5 w-5" />
             {contentType === "chats" ? "New chat" : 
              contentType === "prompts" ? "New prompt" : 
              contentType === "presets" ? "New preset" : "New item"}
@@ -149,29 +197,32 @@ export const Sidebar: FC<SidebarProps> = ({
               placeholder={`Search ${contentType}...`}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 h-9 text-sm"
+              className="pl-9 h-10 text-sm bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary/30"
             />
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
+        {/* Dynamic Content */}
+        <div className="flex-1 overflow-y-auto px-2 pb-4 custom-scrollbar">
           {renderContent()}
         </div>
 
-        <div className="border-t border-border p-4 bg-muted/20">
-          <div className="flex items-center gap-3">
+        {/* User Profile Section */}
+        <div className="border-t border-border p-3 bg-muted/10">
+          <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-muted/50 transition-colors cursor-pointer group">
             <Avatar className="h-9 w-9 border border-border">
               <AvatarImage src={user?.avatar} />
-              <AvatarFallback>
+              <AvatarFallback className="bg-primary/10 text-primary">
                 {user?.name
                   ? user.name.charAt(0).toUpperCase()
                   : user?.email?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-1 flex-col overflow-hidden text-xs">
-              <span className="truncate font-semibold">{user?.name || "User"}</span>
-              <span className="truncate text-muted-foreground">{user?.email}</span>
+              <span className="truncate font-semibold text-foreground">{user?.name || "User"}</span>
+              <span className="truncate text-muted-foreground/80">{user?.email}</span>
             </div>
+            <IconAdjustmentsHorizontal size={16} className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         </div>
       </div>

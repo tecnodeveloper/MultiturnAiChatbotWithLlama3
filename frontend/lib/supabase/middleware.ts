@@ -2,7 +2,7 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export function createClient(request: NextRequest) {
-  const response = {
+  let response = {
     value: NextResponse.next({
       request: {
         headers: request.headers,
@@ -10,8 +10,11 @@ export function createClient(request: NextRequest) {
     }),
   };
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  console.log("Middleware Helper: Using Supabase URL:", supabaseUrl);
+
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    supabaseUrl,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {

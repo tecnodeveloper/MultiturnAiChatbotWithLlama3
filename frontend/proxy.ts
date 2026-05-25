@@ -4,10 +4,20 @@ import { NextResponse, type NextRequest } from "next/server";
 export default async function proxy(request: NextRequest) {
   const { supabase, response } = createClient(request);
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const cookieNames = request.cookies.getAll().map(c => c.name);
+  
   // This will refresh the session if it exists and return the user
   const {
     data: { user },
+    error: authError,
   } = await supabase.auth.getUser();
+
+  console.log(`Proxy: [${request.nextUrl.pathname}] Supabase URL: ${supabaseUrl}, Cookies: ${cookieNames.join(", ")}, User: ${user?.email || "none"}`);
+
+  if (authError) {
+    console.log("Proxy: Auth error:", authError.message);
+  }
 
   const isAuthPage =
     request.nextUrl.pathname === "/login" ||
