@@ -2,11 +2,13 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export function createClient(request: NextRequest) {
-  let response = NextResponse.next({
-    request: {
-      headers: request.headers,
-    },
-  });
+  const response = {
+    value: NextResponse.next({
+      request: {
+        headers: request.headers,
+      },
+    }),
+  };
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,13 +28,20 @@ export function createClient(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) =>
             request.cookies.set(name, value),
           );
-          response = NextResponse.next({
+          response.value = NextResponse.next({
             request: {
               headers: request.headers,
             },
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
+            response.value.cookies.set({
+              name,
+              value,
+              ...options,
+              path: "/",
+              secure: false,
+              sameSite: "lax",
+            }),
           );
         },
       },

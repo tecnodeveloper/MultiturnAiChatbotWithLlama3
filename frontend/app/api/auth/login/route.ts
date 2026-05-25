@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  console.log("Login API: Using Supabase URL:", process.env.NEXT_PUBLIC_SUPABASE_URL);
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithPassword({
     email,

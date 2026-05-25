@@ -1,34 +1,43 @@
 import { createClient } from "@/lib/supabase/middleware";
 import { NextResponse, type NextRequest } from "next/server";
 
-export async function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { supabase, response } = createClient(request);
 
-  // Refresh session if it exists
+  // This will refresh the session if it exists and return the user
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log("Proxy: path =", request.nextUrl.pathname, "user =", user?.email || "none");
+  const isAuthPage =
+    request.nextUrl.pathname === "/login" ||
+    request.nextUrl.pathname === "/signup" ||
+    request.nextUrl.pathname === "/reset" ||
+    request.nextUrl.pathname === "/";
 
-  // Redirect to login if accessing dashboard without user
-  if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
-    console.log("Proxy: No user for dashboard, redirecting to /login");
-    return NextResponse.redirect(new URL("/login", request.url));
+  const isDashboardPage = request.nextUrl.pathname.startsWith("/dashboard") || 
+                         request.nextUrl.pathname.startsWith("/account");
+
+  // Redirect to login if accessing protected page without user
+  if (!user && isDashboardPage) {
+    const redirectResponse = NextResponse.redirect(new URL("/login", request.url));
+    // Copy cookies from refreshed response to the redirect
+    response.value.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie);
+    });
+    return redirectResponse;
   }
 
-  // Redirect to dashboard if accessing login/signup with user
-  if (
-    user &&
-    (request.nextUrl.pathname === "/login" ||
-      request.nextUrl.pathname === "/signup" ||
-      request.nextUrl.pathname === "/")
-  ) {
-    console.log("Proxy: User found for auth page, redirecting to /dashboard");
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+  // Redirect to dashboard if accessing auth page with user
+  if (user && isAuthPage) {
+    const redirectResponse = NextResponse.redirect(new URL("/dashboard", request.url));
+    response.value.cookies.getAll().forEach((cookie) => {
+      redirectResponse.cookies.set(cookie);
+    });
+    return redirectResponse;
   }
 
-  return response;
+  return response.value;
 }
 
 export const config = {

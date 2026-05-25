@@ -23,7 +23,12 @@ export async function createClient() {
             console.log("Server Client: setAll called for", cookiesToSet.length, "cookies");
             cookiesToSet.forEach(({ name, value, options }) => {
               console.log("  Setting cookie:", name);
-              cookieStore.set(name, value, options);
+              cookieStore.set(name, value, {
+                ...options,
+                path: "/",
+                secure: false, // Force false for local dev
+                sameSite: "lax",
+              });
             });
           } catch (err) {
             console.error("Server Client: Failed to set cookies", err);
