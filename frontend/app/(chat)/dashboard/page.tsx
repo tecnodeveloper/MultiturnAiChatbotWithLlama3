@@ -19,6 +19,7 @@ import {
   Paperclip,
   X,
   FileText,
+  Search,
 } from "lucide-react";
 import {
   createChat,
@@ -30,43 +31,6 @@ import {
   uploadFile,
   getFilesByChatId,
 } from "@/db";
-
-// ... inside DashboardPage
-  const [isUploading, setIsUploading] = useState(false);
-  const [attachedFiles, setAttachedFiles] = useState<any[]>([]);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-
-    setIsUploading(true);
-    try {
-      // Create chat if doesn't exist
-      let chatId = currentChatId;
-      if (!chatId) {
-        const newChat = await createChat({
-          title: file.name.slice(0, 42),
-          user_id: user.id,
-        });
-        chatId = newChat.id;
-        setCurrentChatId(chatId);
-        setChats([{
-          id: newChat.id,
-          title: newChat.title,
-          messages: [],
-          createdAt: newChat.created_at
-        }, ...chats]);
-      }
-
-      const uploaded = await uploadFile(file, chatId, user.id);
-      setAttachedFiles(prev => [...prev, uploaded]);
-      toast.success(`Uploaded ${file.name}`);
-    } catch (error) {
-      toast.error("Failed to upload file");
-    } finally {
-      setIsUploading(false);
-    }
-  };
 import { consumeReadableStream } from "@/lib/consume-stream";
 import { FeedbackModal } from "@/components/feedback-modal";
 
@@ -94,13 +58,67 @@ export default function DashboardPage() {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState("Groq");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<any[]>([]);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
+  // Computed values
+  const currentChat = useMemo(
+    () => chats.find((chat) => chat.id === currentChatId) ?? null,
+    [chats, currentChatId],
+  );
+
+  const filteredChats = useMemo(() => {
+    return chats.filter((chat) =>
+      chat.title.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+  }, [chats, searchTerm]);
+
+  // Actions
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    setIsUploading(true);
+    try {
+      let chatId = currentChatId;
+      if (!chatId) {
+        const newChat = await createChat({
+          title: file.name.slice(0, 42),
+          user_id: user.id,
+        });
+        chatId = newChat.id;
+        setCurrentChatId(chatId);
+        setChats([{
+          id: newChat.id,
+          title: newChat.title,
+          messages: [],
+          createdAt: newChat.created_at
+        }, ...chats]);
+      }
+
+      if (!chatId) {
+        throw new Error("Chat ID not initialized");
+      }
+
+      const uploaded = await uploadFile(file, chatId, user.id);
+      setAttachedFiles(prev => [...prev, uploaded]);
+      toast.success(`Uploaded ${file.name}`);
+    } catch (error) {
+      toast.error("Failed to upload file");
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  // Effects
   useEffect(() => {
     if (currentChat?.messages.length || isSending) {
       scrollToBottom();
@@ -140,11 +158,6 @@ export default function DashboardPage() {
 
     loadChats();
   }, [user]);
-
-  const currentChat = useMemo(
-    () => chats.find((chat) => chat.id === currentChatId) ?? null,
-    [chats, currentChatId],
-  );
 
   const handleNewChat = async () => {
     if (!user) return;
@@ -194,7 +207,6 @@ export default function DashboardPage() {
       let chatId = currentChatId;
       let activeChat = currentChat;
 
-      // If no current chat, create one
       if (!chatId) {
         const newChat = await createChat({
           title: userContent.slice(0, 42),
@@ -211,9 +223,8 @@ export default function DashboardPage() {
         setCurrentChatId(chatId);
       }
 
-      // Save user message to DB
       const userMsg = await createMessage({
-        chat_id: chatId,
+        chat_id: chatId!,
         role: "user",
         content: userContent,
         user_id: user.id,
@@ -226,14 +237,12 @@ export default function DashboardPage() {
         timestamp: userMsg.created_at,
       };
 
-      // Update local state with user message
       setChats((prev) =>
         prev.map((c) =>
           c.id === chatId ? { ...c, messages: [...c.messages, userMessage] } : c,
         ),
       );
 
-      // Prepare for AI response
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
@@ -256,7 +265,6 @@ export default function DashboardPage() {
         throw new Error("No response body");
       }
 
-      // Create a placeholder assistant message in local state
       const assistantId = crypto.randomUUID();
       const assistantMessage: Message = {
         id: assistantId,
@@ -295,7 +303,6 @@ export default function DashboardPage() {
         controller.signal,
       );
 
-      // Save full assistant message to DB
       const savedAssistantMsg = await createMessage({
         chat_id: chatId!,
         role: "assistant",
@@ -303,10 +310,8 @@ export default function DashboardPage() {
         user_id: user.id,
       });
 
-      // Clear attachments after successful send
       setAttachedFiles([]);
 
-      // Update local state with the actual DB ID and timestamp
       setChats((prev) =>
         prev.map((c) =>
           c.id === chatId
@@ -326,7 +331,6 @@ export default function DashboardPage() {
         ),
       );
 
-      // If title was "New Chat", update it
       if (activeChat?.title === "New Chat") {
         const newTitle = userContent.slice(0, 42);
         await updateChat(chatId!, { title: newTitle });
@@ -335,7 +339,6 @@ export default function DashboardPage() {
         );
       }
 
-      // Trigger feedback modal after 6 user messages
       const userMessageCount = [
         ...(activeChat?.messages || []),
         userMessage,
@@ -399,18 +402,29 @@ export default function DashboardPage() {
             </Button>
           </div>
 
-          <div className="p-4">
+          <div className="p-4 space-y-4">
             {sidebarOpen && (
-              <Button className="w-full justify-start gap-2" onClick={handleNewChat}>
-                <Plus className="h-4 w-4" />
-                New chat
-              </Button>
+              <>
+                <Button className="w-full justify-start gap-2" onClick={handleNewChat}>
+                  <Plus className="h-4 w-4" />
+                  New chat
+                </Button>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    placeholder="Search chats..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 h-9 text-sm"
+                  />
+                </div>
+              </>
             )}
           </div>
 
           <div className="flex-1 overflow-y-auto px-3 pb-4">
             {sidebarOpen &&
-              chats.map(chat => (
+              filteredChats.map(chat => (
                 <button
                   key={chat.id}
                   onClick={() => setCurrentChatId(chat.id)}
