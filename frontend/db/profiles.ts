@@ -7,11 +7,26 @@ export async function getProfile(userId: string) {
     .from("profiles")
     .select("*")
     .eq("id", userId)
-    .single();
+    .maybeSingle();
 
   if (error) {
-    console.error("Error fetching profile:", error);
+    console.error("Supabase error fetching profile:", error.message);
     return null;
+  }
+
+  // If profile doesn't exist, create it (handles users created before trigger)
+  if (!data) {
+    const { data: newProfile, error: insertError } = await supabase
+      .from("profiles")
+      .insert([{ id: userId }])
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error("Error creating profile:", insertError.message);
+      return null;
+    }
+    return newProfile;
   }
 
   return data;

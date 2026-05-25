@@ -64,7 +64,6 @@ export default function DashboardPage() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
-  const [showProfileModal, setShowProfileModal] = useState(false);
   const [profile, setProfile] = useState<any>(null);
   const [selectedProvider, setSelectedProvider] = useState("Groq");
   const [selectedModel, setSelectedModel] = useState("llama-3.3-70b-versatile");
@@ -470,7 +469,7 @@ export default function DashboardPage() {
           <div className="border-t border-border p-4">
             <div className="flex flex-col items-center gap-4">
               <button
-                onClick={() => setShowProfileModal(true)}
+                onClick={() => router.push("/account")}
                 className="group relative transition-transform hover:scale-105"
               >
                 <Avatar className="h-16 w-16 border-2 border-border transition-colors group-hover:border-primary">
@@ -489,7 +488,7 @@ export default function DashboardPage() {
                   variant="outline" 
                   size="sm" 
                   className="flex-1 gap-2"
-                  onClick={() => setShowProfileModal(true)}
+                  onClick={() => router.push("/account")}
                 >
                   <Settings className="h-4 w-4" />
                   Account
@@ -687,17 +686,9 @@ export default function DashboardPage() {
           userId={user.id}
         />
       )}
-
-      {user && (
-        <ProfileModal
-          isOpen={showProfileModal}
-          onClose={() => setShowProfileModal(false)}
-          userId={user.id}
-          onProfileUpdate={loadProfile}
-        />
-      )}
     </div>
   );
 }
+
 
 

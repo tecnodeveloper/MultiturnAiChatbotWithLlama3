@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { updateProfile, uploadAvatar, getProfile } from "@/db";
-import { Camera, Loader2 } from "lucide-react";
+import { Camera, Loader2, ImagePlus, Trash2 } from "lucide-react";
 
 interface ProfileModalProps {
   isOpen: boolean;
@@ -55,11 +55,24 @@ export function ProfileModal({
     try {
       const url = await uploadAvatar(file, userId);
       setImageUrl(url);
+      await updateProfile(userId, { image_url: url });
       toast.success("Avatar uploaded");
-    } catch (error) {
-      toast.error("Failed to upload avatar");
+      onProfileUpdate();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to upload avatar");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    try {
+      await updateProfile(userId, { image_url: "" });
+      setImageUrl("");
+      toast.success("Photo removed");
+      onProfileUpdate();
+    } catch (error) {
+      toast.error("Failed to remove photo");
     }
   };
 
@@ -79,24 +92,24 @@ export function ProfileModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-background border-border">
+      <DialogContent className="sm:max-w-[425px] bg-background border-border shadow-2xl">
         <DialogHeader>
           <DialogTitle>User Profile</DialogTitle>
         </DialogHeader>
         <div className="grid gap-6 py-4">
           <div className="flex flex-col items-center gap-4">
             <div className="relative group">
-              <Avatar className="h-24 w-24 border-2 border-border">
-                <AvatarImage src={imageUrl} />
+              <Avatar className="h-24 w-24 border-2 border-border shadow-md">
+                <AvatarImage src={imageUrl} className="object-cover" />
                 <AvatarFallback className="text-2xl bg-primary/10">
                   {name ? name.charAt(0).toUpperCase() : "U"}
                 </AvatarFallback>
               </Avatar>
-              <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+              <label className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-all">
                 {isUploading ? (
                   <Loader2 className="h-6 w-6 animate-spin text-white" />
                 ) : (
-                  <Camera className="h-6 w-6 text-white" />
+                  <ImagePlus className="h-6 w-6 text-white" />
                 )}
                 <input
                   type="file"
@@ -107,10 +120,23 @@ export function ProfileModal({
                 />
               </label>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Click photo to change avatar
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
+                Change Photo
+              </p>
+              {imageUrl && (
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6 text-destructive hover:bg-destructive/10"
+                  onClick={handleRemovePhoto}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
           </div>
+
 
           <div className="grid gap-2">
             <Label htmlFor="name">Display Name</Label>

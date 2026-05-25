@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Brand } from "@/components/ui/brand";
 import { toast } from "sonner";
-import { ArrowLeft, Camera, Loader2, Save } from "lucide-react";
+import { ArrowLeft, Camera, Loader2, Save, ImagePlus, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 export default function AccountPage() {
@@ -46,15 +46,37 @@ export default function AccountPage() {
     const file = e.target.files?.[0];
     if (!file || !user) return;
 
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
     setIsUploading(true);
     try {
       const url = await uploadAvatar(file, user.id);
       setImageUrl(url);
-      toast.success("Avatar uploaded");
-    } catch (error) {
-      toast.error("Failed to upload avatar");
+      // Auto-save the new image URL to the profile
+      await updateProfile(user.id, { image_url: url });
+      toast.success("Avatar updated");
+      router.refresh();
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast.error(error.message || "Failed to upload avatar");
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!user) return;
+    try {
+      await updateProfile(user.id, { image_url: "" });
+      setImageUrl("");
+      toast.success("Photo removed");
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to remove photo");
     }
   };
 
@@ -101,8 +123,8 @@ export default function AccountPage() {
         <div className="rounded-xl border border-border bg-background p-8 shadow-sm">
           <div className="mb-10 flex flex-col items-center gap-6">
             <div className="relative group">
-              <Avatar className="h-32 w-32 border-4 border-muted">
-                <AvatarImage src={imageUrl} />
+              <Avatar className="h-32 w-32 border-4 border-muted shadow-lg">
+                <AvatarImage src={imageUrl} className="object-cover" />
                 <AvatarFallback className="text-4xl bg-primary/10">
                   {name ? name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
                 </AvatarFallback>
@@ -112,8 +134,8 @@ export default function AccountPage() {
                   <Loader2 className="h-8 w-8 animate-spin text-white" />
                 ) : (
                   <div className="flex flex-col items-center text-white gap-1">
-                    <Camera className="h-8 w-8" />
-                    <span className="text-[10px] font-medium">Change Photo</span>
+                    <ImagePlus className="h-8 w-8" />
+                    <span className="text-[10px] font-medium uppercase tracking-wider">Change</span>
                   </div>
                 )}
                 <input
@@ -125,9 +147,23 @@ export default function AccountPage() {
                 />
               </label>
             </div>
-            <div className="text-center">
-              <h2 className="text-xl font-bold">{name || "Your Name"}</h2>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
+            
+            <div className="flex flex-col items-center gap-2">
+              <div className="text-center">
+                <h2 className="text-xl font-bold">{name || "Your Name"}</h2>
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
+              </div>
+              {imageUrl && (
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-xs text-destructive hover:text-destructive hover:bg-destructive/10 h-8 gap-1"
+                  onClick={handleRemovePhoto}
+                >
+                  <Trash2 className="h-3 w-3" />
+                  Remove Photo
+                </Button>
+              )}
             </div>
           </div>
 
