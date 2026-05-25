@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useAuth } from "@/context/auth-context";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Brand } from "@/components/ui/brand";
 import { toast } from "sonner";
 import {
   ChevronDown,
@@ -149,7 +149,25 @@ export default function DashboardPage() {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between gap-3 border-b border-border p-4">
-            {sidebarOpen ? <Brand size="md" showText={false} /> : <Brand size="sm" showText={false} />}
+            {sidebarOpen ? (
+              <Image
+                src="/img/TabIconMultiturnAI.PNG"
+                alt="Chatbot Icon"
+                width={40}
+                height={40}
+                style={{ width: "auto", height: "auto" }}
+                className="rounded"
+              />
+            ) : (
+              <Image
+                src="/img/TabIconMultiturnAI.PNG"
+                alt="Chatbot Icon"
+                width={32}
+                height={32}
+                style={{ width: "auto", height: "auto" }}
+                className="rounded"
+              />
+            )}
             <Button
               variant="ghost"
               size="icon"
@@ -249,7 +267,14 @@ export default function DashboardPage() {
         <div className="flex-1 overflow-y-auto p-6">
           {!currentChat ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-              <Brand size="xl" showText={false} />
+              <Image
+                src="/img/TabIconMultiturnAI.PNG"
+                alt="MultiTurn AI Icon"
+                width={80}
+                height={80}
+                style={{ width: "auto", height: "auto" }}
+                className="rounded"
+              />
               <div>
                 <h2 className="text-2xl font-semibold">Welcome to MultiTurn AI</h2>
                 <p className="text-sm text-muted-foreground">

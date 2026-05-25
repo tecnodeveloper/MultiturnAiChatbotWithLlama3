@@ -3,8 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { useAuth } from "@/context/auth-context";
-import { Brand } from "@/components/ui/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,9 +64,15 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-12">
-          <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center mb-4 border-2 border-white">
-            <span className="text-2xl font-bold text-black">UI</span>
-          </div>
+          <Image
+            src="/img/imageLogo.png"
+            alt="Chatbot Logo"
+            width={80}
+            height={80}
+            style={{ width: "auto", height: "auto" }}
+            className="mb-4"
+            priority
+          />
           <h1 className="text-4xl font-bold text-white text-center">
             Chatbot UI
           </h1>
