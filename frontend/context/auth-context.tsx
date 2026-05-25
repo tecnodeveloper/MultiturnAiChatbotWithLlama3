@@ -22,7 +22,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signUp: (email: string, password: string, name?: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -86,8 +86,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(mapUser(data.user ?? null));
   };
 
-  const signUp = async (email: string, password: string, name: string) => {
-    await signUpWithEmail(email, password, name);
+  const signUp = async (email: string, password: string, name?: string) => {
+    await signUpWithEmail(email, password, name || email.split("@")[0]);
     const { data } = await supabase.auth.getUser();
     setUser(mapUser(data.user ?? null));
   };
