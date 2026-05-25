@@ -26,13 +26,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  const result = NextResponse.json({ user: data.user, session: data.session });
-  response.cookies.getAll().forEach((cookie) => {
-    result.cookies.set({
-      ...cookie,
-      path: "/",
-    });
-  });
-
-  return result;
+  return NextResponse.json(
+    { user: data.user, session: data.session },
+    {
+      status: 200,
+      headers: response.headers,
+    },
+  );
 }

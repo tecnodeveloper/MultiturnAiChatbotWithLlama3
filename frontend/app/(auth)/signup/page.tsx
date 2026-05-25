@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +13,7 @@ import { toast } from "sonner";
 import { Brand } from "@/components/ui/brand";
 
 export default function SignupPage() {
+  const router = useRouter();
   const { signUp, signInWithGoogle, isLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,7 +41,8 @@ export default function SignupPage() {
     try {
       setIsSigningUp(true);
       await signUp(email, password);
-      window.location.assign("/dashboard");
+      router.push("/dashboard");
+      router.refresh();
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");
     } finally {

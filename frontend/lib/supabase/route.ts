@@ -21,13 +21,9 @@ export function createRouteClient(
           }>,
         ) {
           cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set({
-              name,
-              value,
+            response.cookies.set(name, value, {
               ...options,
-              path: "/",
-              secure: false,
-              sameSite: "lax",
+              path: options?.path || "/",
             });
           });
         },
