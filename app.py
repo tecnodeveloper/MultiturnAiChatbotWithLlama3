@@ -76,6 +76,7 @@ def chat():
     user_message = data.get('message', '')
     session_id = data.get('session_id', '') # In Supabase schema, this is chat_id
     user_id = data.get('user_id', '')
+    requested_model = data.get('model', MODEL)
     
     if not user_message or not session_id or not user_id:
         return jsonify({"error": "Missing message, session_id (chat_id), or user_id"}), 400
@@ -92,7 +93,7 @@ def chat():
     def generate():
         try:
             completion = client.chat.completions.create(
-                model=MODEL,
+                model=requested_model,
                 messages=messages,
                 temperature=1,
                 max_tokens=1024,

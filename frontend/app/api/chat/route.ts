@@ -1,30 +1,45 @@
 import { streamText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
+import { createGroq } from "@ai-sdk/groq";
 
 export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { messages, provider, fileContexts } = await req.json();
-    console.log("Chat API Request - Provider:", provider);
+    const { messages, provider, model: requestedModel, fileContexts } = await req.json();
+    console.log("Chat API Request - Provider:", provider, "Model:", requestedModel);
     console.log("OLLAMA_URL env:", process.env.OLLAMA_URL);
 
     let apiKey = "";
     let baseURL = "";
-    let model = "";
+    let model = requestedModel || "";
+    let aiProvider: any;
 
     if (provider === "Groq") {
       apiKey = process.env.GROQ_API_KEY || process.env.NEXT_PUBLIC_GROQ_API_KEY || "";
-      baseURL = "https://api.groq.com/openai/v1";
-      model = "llama-3.3-70b-versatile";
+      const groq = createGroq({
+        apiKey: apiKey,
+      });
+      aiProvider = groq;
+      if (!model) model = "llama-3.3-70b-versatile";
     } else if (provider === "OpenRouter") {
       apiKey = process.env.OPENROUTER_API_KEY || process.env.NEXT_PUBLIC_OPENROUTER_API_KEY || "";
       baseURL = "https://openrouter.ai/api/v1";
-      model = "meta-llama/llama-3.3-70b-instruct";
+      const openai = createOpenAI({
+        apiKey: apiKey,
+        baseURL: baseURL,
+      });
+      aiProvider = openai;
+      if (!model) model = "meta-llama/llama-3.3-70b-instruct";
     } else if (provider === "Ollama") {
       apiKey = "ollama";
       baseURL = process.env.OLLAMA_URL || "http://localhost:11434/v1";
-      model = "llama3:latest";
+      const openai = createOpenAI({
+        apiKey: apiKey,
+        baseURL: baseURL,
+      });
+      aiProvider = openai;
+      if (!model) model = "llama3:latest";
     }
 
     if (!apiKey && provider !== "Ollama") {
@@ -33,11 +48,6 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
-
-    const openai = createOpenAI({
-      apiKey: apiKey,
-      baseURL: baseURL,
-    });
 
     const finalMessages = [...messages];
     if (fileContexts) {
@@ -48,13 +58,14 @@ export async function POST(req: Request) {
     }
 
     const result = await streamText({
-      model: openai(model),
+      model: aiProvider(model),
       messages: finalMessages.map((m: any) => ({
         role: m.role,
         content: m.content,
       })),
       temperature: 0.7,
     });
+
 
     return result.toTextStreamResponse();
   } catch (error: any) {

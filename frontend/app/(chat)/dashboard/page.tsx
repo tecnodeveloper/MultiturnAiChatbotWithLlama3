@@ -49,6 +49,8 @@ interface Chat {
 }
 
 import { Brand } from "@/components/ui/brand";
+import { AI_PROVIDERS } from "@/lib/ai-providers";
+import { IconChevronCompactRight } from "@tabler/icons-react";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -60,12 +62,22 @@ export default function DashboardPage() {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedProvider, setSelectedProvider] = useState("Groq");
+  const [selectedModel, setSelectedModel] = useState("llama-3.3-70b-versatile");
   const [searchTerm, setSearchTerm] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState<any[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Update model when provider changes
+  useEffect(() => {
+    const provider = AI_PROVIDERS.find(p => p.id === selectedProvider);
+    if (provider && !provider.models.some(m => m.id === selectedModel)) {
+      setSelectedModel(provider.models[0].id);
+    }
+  }, [selectedProvider]);
+
 
   // Computed values
   const currentChat = useMemo(
@@ -254,6 +266,7 @@ export default function DashboardPage() {
         body: JSON.stringify({
           messages: [...(activeChat?.messages || []), userMessage],
           provider: selectedProvider,
+          model: selectedModel,
         }),
         signal: controller.signal,
       });
@@ -368,106 +381,100 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background text-foreground">
+    <div className="flex h-screen bg-background text-foreground overflow-hidden">
       <aside
-        className={`border-r border-border bg-background transition-all duration-200 ${
-          sidebarOpen ? "w-72" : "w-20"
+        className={`border-r border-border bg-background transition-all duration-200 ease-in-out ${
+          sidebarOpen ? "w-[300px]" : "w-0"
         }`}
       >
-        <div className="flex h-full flex-col">
-          <div className="flex items-center justify-between gap-3 border-b border-border p-4">
-            <Brand size={sidebarOpen ? "md" : "sm"} showText={sidebarOpen} />
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setSidebarOpen(prev => !prev)}
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
+        <div className={`flex h-full flex-col overflow-hidden ${sidebarOpen ? "opacity-100" : "opacity-0 invisible"}`}>
+          <div className="flex items-center gap-3 border-b border-border p-4">
+            <Brand size="md" />
           </div>
 
           <div className="p-4 space-y-4">
-            {sidebarOpen && (
-              <>
-                <Button className="w-full justify-start gap-2" onClick={handleNewChat}>
-                  <Plus className="h-4 w-4" />
-                  New chat
-                </Button>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search chats..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 h-9 text-sm"
-                  />
-                </div>
-              </>
-            )}
+            <Button className="w-full justify-start gap-2" onClick={handleNewChat}>
+              <Plus className="h-4 w-4" />
+              New chat
+            </Button>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search chats..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-9 h-9 text-sm"
+              />
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-3 pb-4">
-            {sidebarOpen &&
-              filteredChats.map(chat => (
-                <button
-                  key={chat.id}
-                  onClick={() => setCurrentChatId(chat.id)}
-                  className={`group mb-2 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
-                    currentChatId === chat.id
-                      ? "bg-muted"
-                      : "hover:bg-muted/70"
-                  }`}
-                >
-                  <span className="truncate">{chat.title}</span>
-                  <span className="opacity-0 transition-opacity group-hover:opacity-100">
-                    <Trash2
-                      className="h-3.5 w-3.5"
-                      onClick={e => {
-                        e.stopPropagation();
-                        handleDeleteChat(chat.id);
-                      }}
-                    />
-                  </span>
-                </button>
-              ))}
+          <div className="flex-1 overflow-y-auto px-3 pb-4 custom-scrollbar">
+            {filteredChats.map(chat => (
+              <button
+                key={chat.id}
+                onClick={() => setCurrentChatId(chat.id)}
+                className={`group mb-1 flex w-full items-center justify-between rounded-lg px-3 py-2 text-left text-sm transition-colors ${
+                  currentChatId === chat.id
+                    ? "bg-muted"
+                    : "hover:bg-muted/70"
+                }`}
+              >
+                <span className="truncate">{chat.title}</span>
+                <span className="opacity-0 transition-opacity group-hover:opacity-100">
+                  <Trash2
+                    className="h-3.5 w-3.5 hover:text-destructive"
+                    onClick={e => {
+                      e.stopPropagation();
+                      handleDeleteChat(chat.id);
+                    }}
+                  />
+                </span>
+              </button>
+            ))}
           </div>
 
           <div className="border-t border-border p-4">
-            {sidebarOpen ? (
-              <div className="space-y-2">
-                <div className="rounded-lg border border-border bg-muted/40 p-3">
-                  <p className="text-sm font-medium">{user?.name || "User"}</p>
-                  <p className="truncate text-xs text-muted-foreground">
-                    {user?.email}
-                  </p>
-                </div>
-                <Button variant="ghost" className="w-full justify-start gap-2">
-                  <Settings className="h-4 w-4" />
-                  Settings
-                  <ChevronDown className="ml-auto h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-2"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </Button>
+            <div className="space-y-2">
+              <div className="rounded-lg border border-border bg-muted/40 p-3">
+                <p className="text-sm font-medium">{user?.name || "User"}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {user?.email}
+                </p>
               </div>
-            ) : (
-              <Button variant="ghost" size="icon" onClick={handleLogout}>
-                <LogOut className="h-4 w-4" />
+              <Button variant="ghost" className="w-full justify-start gap-2">
+                <Settings className="h-4 w-4" />
+                Settings
+                <ChevronDown className="ml-auto h-4 w-4" />
               </Button>
-            )}
+              <Button
+                variant="ghost"
+                className="w-full justify-start gap-2"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </aside>
 
-      <main className="flex min-w-0 flex-1 flex-col">
+      <main className="relative flex min-w-0 flex-1 flex-col">
+        <Button
+          className="absolute left-[4px] top-[50%] z-50 size-[32px] cursor-pointer rounded-full border border-border bg-background shadow-md transition-transform duration-200 hover:scale-110"
+          style={{
+            transform: `translateY(-50%) rotate(${sidebarOpen ? "180deg" : "0deg"})`,
+          }}
+          variant="ghost"
+          size="icon"
+          onClick={() => setSidebarOpen(prev => !prev)}
+        >
+          <IconChevronCompactRight size={24} />
+        </Button>
+
         <header className="flex items-center justify-between border-b border-border px-6 py-4">
           <div>
-            <h1 className="text-base font-semibold">
+            <h1 className="text-base font-semibold truncate max-w-[200px] md:max-w-md">
               {currentChat?.title || "Dashboard"}
             </h1>
             <p className="text-sm text-muted-foreground">
@@ -479,16 +486,32 @@ export default function DashboardPage() {
             <select
               value={selectedProvider}
               onChange={(e) => setSelectedProvider(e.target.value)}
-              className="h-10 rounded-md border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+              className="h-10 rounded-md border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
             >
-              <option value="Groq">Groq</option>
-              <option value="OpenRouter">OpenRouter</option>
-              <option value="Ollama">Ollama</option>
+              {AI_PROVIDERS.map((provider) => (
+                <option key={provider.id} value={provider.id}>
+                  {provider.name}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              className="h-10 rounded-md border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all"
+            >
+              {AI_PROVIDERS.find((p) => p.id === selectedProvider)?.models.map(
+                (model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name}
+                  </option>
+                ),
+              )}
             </select>
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-6 bg-muted/20">
           {!currentChat ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
               <Brand size="xl" showText={false} />
@@ -513,21 +536,21 @@ export default function DashboardPage() {
                   }`}
                 >
                   {item.role === "assistant" && (
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0">
                       AI
                     </div>
                   )}
                   <div
                     className={`max-w-2xl rounded-2xl px-4 py-3 text-sm ${
                       item.role === "user"
-                        ? "rounded-br-md bg-primary text-primary-foreground"
-                        : "rounded-bl-md bg-muted"
+                        ? "rounded-br-md bg-primary text-primary-foreground shadow-sm"
+                        : "rounded-bl-md bg-background border border-border shadow-sm"
                     }`}
                   >
                     <p className="whitespace-pre-wrap leading-6">{item.content}</p>
                   </div>
                   {item.role === "assistant" && (
-                    <Button variant="ghost" size="icon" className="h-9 w-9">
+                    <Button variant="ghost" size="icon" className="h-9 w-9 flex-shrink-0">
                       <Copy className="h-4 w-4" />
                     </Button>
                   )}
@@ -539,7 +562,7 @@ export default function DashboardPage() {
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
                     AI
                   </div>
-                  <div className="rounded-2xl rounded-bl-md bg-muted px-4 py-3">
+                  <div className="rounded-2xl rounded-bl-md bg-background border border-border px-4 py-3 shadow-sm">
                     <div className="flex gap-1">
                       <span className="h-2 w-2 animate-bounce rounded-full bg-foreground/50" />
                       <span className="h-2 w-2 animate-bounce rounded-full bg-foreground/50 [animation-delay:120ms]" />
@@ -553,14 +576,14 @@ export default function DashboardPage() {
           )}
         </div>
 
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border p-4 bg-background">
           <div className="mx-auto max-w-4xl">
             {attachedFiles.length > 0 && (
               <div className="mb-3 flex flex-wrap gap-2">
                 {attachedFiles.map((file) => (
                   <div
                     key={file.id}
-                    className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1.5 text-xs"
+                    className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1.5 text-xs border border-border"
                   >
                     <FileText className="h-3.5 w-3.5" />
                     <span className="max-w-[150px] truncate">{file.name}</span>
@@ -584,11 +607,11 @@ export default function DashboardPage() {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Message MultiTurn AI..."
-                  className="h-12 pl-12"
+                  className="h-12 pl-12 rounded-xl border-border bg-background focus:ring-1 focus:ring-primary"
                   disabled={isSending}
                 />
                 <div className="absolute left-2 flex items-center">
-                  <label className="cursor-pointer rounded-full p-2 hover:bg-muted">
+                  <label className="cursor-pointer rounded-full p-2 hover:bg-muted transition-colors">
                     <Paperclip className="h-5 w-5 text-muted-foreground" />
                     <input
                       type="file"
@@ -599,8 +622,8 @@ export default function DashboardPage() {
                   </label>
                 </div>
               </div>
-              <Button type="submit" disabled={!message.trim() || isSending}>
-                <Send className="h-4 w-4" />
+              <Button type="submit" className="h-12 w-12 rounded-xl" disabled={!message.trim() || isSending}>
+                <Send className="h-5 w-5" />
               </Button>
             </form>
           </div>
@@ -618,3 +641,4 @@ export default function DashboardPage() {
     </div>
   );
 }
+
