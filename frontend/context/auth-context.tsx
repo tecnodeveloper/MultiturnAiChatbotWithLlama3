@@ -7,7 +7,7 @@ import {
   signOut,
   signUpWithEmail,
 } from "@/lib/auth";
-import type { Session, User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 export interface AuthUser {
@@ -19,7 +19,6 @@ export interface AuthUser {
 
 interface AuthContextType {
   user: AuthUser | null;
-  session: Session | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   signIn: (email: string, password: string) => Promise<void>;
@@ -56,60 +55,41 @@ function mapUser(user: User | null): AuthUser | null {
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let mounted = true;
-
     const initialize = async () => {
-      const { data } = await supabase.auth.getSession();
-
-      if (!mounted) {
-        return;
-      }
-
-      setSession(data.session);
-      setUser(mapUser(data.session?.user ?? null));
+      const { data } = await supabase.auth.getUser();
+      setUser(mapUser(data.user ?? null));
       setIsLoading(false);
     };
 
     initialize();
 
+    // Listen for auth state changes (e.g., after login from another tab or route)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      (_event, nextSession) => {
-        setSession(nextSession);
-        setUser(mapUser(nextSession?.user ?? null));
-        setIsLoading(false);
-      },
-    );
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      const { data } = await supabase.auth.getUser();
+      setUser(mapUser(data.user ?? null));
+    });
 
     return () => {
-      mounted = false;
       subscription.unsubscribe();
     };
   }, []);
 
   const signIn = async (email: string, password: string) => {
     await signInWithEmail(email, password);
-    // Let the onAuthStateChange subscription handle session updates
-    // Add a small delay to allow cookies to be fully set
-    await new Promise(resolve => setTimeout(resolve, 100));
-    const { data } = await supabase.auth.getSession();
-    setSession(data.session);
-    setUser(mapUser(data.session?.user ?? null));
+    // Re-fetch user to ensure auth context is in sync with server session
+    const { data } = await supabase.auth.getUser();
+    setUser(mapUser(data.user ?? null));
   };
 
   const signUp = async (email: string, password: string, name: string) => {
     await signUpWithEmail(email, password, name);
-    // Let the onAuthStateChange subscription handle session updates
-    // Add a small delay to allow cookies to be fully set
-    await new Promise(resolve => setTimeout(resolve, 100));
-    const { data } = await supabase.auth.getSession();
-    setSession(data.session);
-    setUser(mapUser(data.session?.user ?? null));
+    const { data } = await supabase.auth.getUser();
+    setUser(mapUser(data.user ?? null));
   };
 
   const handleGoogleSignIn = async () => {
@@ -118,20 +98,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const handleLogout = async () => {
     await signOut();
+    setUser(null);
   };
 
   const value = useMemo<AuthContextType>(
     () => ({
       user,
-      session,
       isLoading,
-      isAuthenticated: !!session,
+      isAuthenticated: !!user,
       signIn,
       signUp,
       signInWithGoogle: handleGoogleSignIn,
       logout: handleLogout,
     }),
-    [user, session, isLoading],
+    [user, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

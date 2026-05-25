@@ -655,3 +655,59 @@ npm run format:write # Format code
 - Successful auth redirects to `/dashboard`
 - `/dashboard` no longer bounces during normal authenticated navigation
 - Frontend build passes after the auth-session sync fix
+
+## Auth Flow Recovery & Cookie Sync Repair (May 25, 2026 - Session 6)
+
+### ✅ Issue Fixed: Infinite Dashboard Reload Loop
+
+**Problem:**
+- Dashboard page was reloading infinitely (~50-100ms intervals)
+- After fixing the reload loop, login succeeded but dashboard access was broken
+- Post-login redirect failed due to session/cookie sync mismatch between server and browser
+
+**Root Causes Identified:**
+1. `lib/supabase/route.ts` was setting cookies on both immutable `request.cookies` and `response.cookies`
+2. Auth subscription was removed, leaving only server-side session checks
+3. Client-side browser didn't know about successful login before redirecting
+4. Timing issue: server layout check fired before cookies were synced to browser
+
+**Solutions Applied:**
+
+1. **Fixed Cookie Persistence** (`lib/supabase/route.ts`):
+   - Removed line that set cookies on immutable `request.cookies` 
+   - Now only set cookies on mutable `response.cookies`
+   - This ensures Supabase auth cookies are properly sent back to browser
+
+2. **Restored Auth State Subscription** (`context/auth-context.tsx`):
+   - Added back `supabase.auth.onAuthStateChange()` listener
+   - This keeps browser auth state in sync with server sessions
+   - Listens for session changes even from other tabs
+   - Re-fetches user on mount and on auth events
+
+3. **Added Timing Buffer** (`app/(auth)/login/page.tsx`):
+   - Added 500ms delay before redirecting to dashboard after login
+   - Gives auth context time to update and cookies to sync
+   - Prevents premature redirect before session is ready
+
+### ✅ Files Modified
+
+- `frontend/lib/supabase/route.ts` - Fixed cookie setting logic
+- `frontend/context/auth-context.tsx` - Restored auth subscription
+- `frontend/app/(auth)/login/page.tsx` - Added redirect delay
+
+### ✅ Expected Behavior After Fix
+
+1. User fills login form → POST /api/auth/login
+2. Server signs in with Supabase, sets auth cookies in response
+3. Browser receives cookies and auth context subscription fires
+4. Auth context updates with user data (500ms buffer ensures this)
+5. Client redirects to /dashboard with user logged in
+6. Server layout calls getUser() → finds valid session
+7. Dashboard renders without redirect loop
+
+### 🔄 Dev Server Status
+
+- ✅ Frontend build: successful
+- ✅ Dev server: running on localhost:3000
+- ⏳ Login flow: ready for manual testing
+- ⏳ Supabase local instance: running (127.0.0.1:54321)

@@ -10,33 +10,24 @@ export function createRouteClient(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        get(name: string) {
-          return request.cookies.get(name)?.value;
+        getAll() {
+          return request.cookies.getAll();
         },
-        set(name: string, value: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          request.cookies.set({
-            name,
-            value: "",
-            ...options,
-          });
-
-          response.cookies.set({
-            name,
-            value: "",
-            ...options,
+        setAll(
+          cookiesToSet: Array<{
+            name: string;
+            value: string;
+            options?: CookieOptions;
+          }>,
+        ) {
+          console.log("setAll called with:", cookiesToSet.length, "cookies");
+          cookiesToSet.forEach(({ name, value, options }) => {
+            console.log("Setting cookie:", name);
+            response.cookies.set({
+              name,
+              value,
+              ...options,
+            });
           });
         },
       },

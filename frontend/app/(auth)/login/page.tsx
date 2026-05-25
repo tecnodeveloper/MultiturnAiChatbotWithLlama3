@@ -17,7 +17,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
 
-  const handleEmailSignIn = async (e: React.FormEvent) => {
+const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       toast.error("Please fill in all fields");
@@ -28,6 +28,8 @@ export default function LoginPage() {
       setIsSigningIn(true);
       await signIn(email, password);
       toast.success("Signed in successfully!");
+      // Give auth context time to update and Supabase client to sync cookies
+      await new Promise(resolve => setTimeout(resolve, 500));
       router.replace("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");

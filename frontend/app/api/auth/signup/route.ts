@@ -15,7 +15,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const response = new NextResponse(null, { status: 204 });
+  const response = new NextResponse(JSON.stringify({}), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
   const supabase = createRouteClient(request, response);
   const { error } = await supabase.auth.signUp({
     email,
@@ -28,6 +31,14 @@ export async function POST(request: NextRequest) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
+
+  // Force write cookies from request to response
+  const cookies = request.cookies.getAll();
+  cookies.forEach(({ name: cookieName, value }) => {
+    if (cookieName.startsWith("sb-")) {
+      response.cookies.set(cookieName, value, { httpOnly: true, secure: true, sameSite: "lax", path: "/" });
+    }
+  });
 
   return response;
 }
