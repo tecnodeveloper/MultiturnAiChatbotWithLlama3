@@ -20,16 +20,16 @@ export function createRouteClient(
             options?: CookieOptions;
           }>,
         ) {
-          console.log("Route Client setAll: setting", cookiesToSet.length, "cookies");
           cookiesToSet.forEach(({ name, value, options }) => {
-            console.log("  Setting cookie:", name, "value length:", value.length);
             response.cookies.set({
               name,
               value,
               ...options,
+              path: "/",
+              secure: false,
+              sameSite: "lax",
             });
           });
-          console.log("Response headers after setAll:", Array.from(response.headers.keys()));
         },
       },
     },

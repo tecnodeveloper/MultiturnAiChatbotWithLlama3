@@ -27,7 +27,7 @@ export default function DashboardPage() {
     attachedFiles,
     setAttachedFiles,
     showFeedbackModal,
-    setShowFeedbackModal
+    setShowFeedbackModal,
   } = useDashboard();
 
   const handleAction = () => {
@@ -42,7 +42,9 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
-      <div className={`transition-all duration-200 ease-in-out ${sidebarOpen ? "w-[320px]" : "w-0"}`}>
+      <div
+        className={`transition-all duration-200 ease-in-out ${sidebarOpen ? "w-[320px]" : "w-0"}`}
+      >
         {sidebarOpen && (
           <Sidebar
             onNewChat={handleAction}
