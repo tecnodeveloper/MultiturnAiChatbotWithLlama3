@@ -51,6 +51,9 @@ interface Chat {
 import { Brand } from "@/components/ui/brand";
 import { AI_PROVIDERS } from "@/lib/ai-providers";
 import { IconChevronCompactRight } from "@tabler/icons-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ProfileModal } from "@/components/profile-modal";
+import { getProfile } from "@/db";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -61,6 +64,8 @@ export default function DashboardPage() {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
   const [selectedProvider, setSelectedProvider] = useState("Groq");
   const [selectedModel, setSelectedModel] = useState("llama-3.3-70b-versatile");
   const [searchTerm, setSearchTerm] = useState("");
@@ -69,6 +74,35 @@ export default function DashboardPage() {
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Load user profile
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+    }
+  }, [user]);
+
+  const loadProfile = async () => {
+    if (!user) return;
+    const data = await getProfile(user.id);
+    setProfile(data);
+  };
+
+  // Keyboard shortcut Ctrl+C
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === "c") {
+        if (isSending && abortControllerRef.current) {
+          console.log("Cancelling AI response via keyboard shortcut");
+          abortControllerRef.current.abort();
+          toast.info("AI response cancelled");
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isSending]);
 
   // Update model when provider changes
   useEffect(() => {
@@ -434,26 +468,41 @@ export default function DashboardPage() {
           </div>
 
           <div className="border-t border-border p-4">
-            <div className="space-y-2">
-              <div className="rounded-lg border border-border bg-muted/40 p-3">
-                <p className="text-sm font-medium">{user?.name || "User"}</p>
-                <p className="truncate text-xs text-muted-foreground">
-                  {user?.email}
-                </p>
-              </div>
-              <Button variant="ghost" className="w-full justify-start gap-2">
-                <Settings className="h-4 w-4" />
-                Settings
-                <ChevronDown className="ml-auto h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start gap-2"
-                onClick={handleLogout}
+            <div className="flex flex-col items-center gap-4">
+              <button
+                onClick={() => setShowProfileModal(true)}
+                className="group relative transition-transform hover:scale-105"
               >
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Button>
+                <Avatar className="h-16 w-16 border-2 border-border transition-colors group-hover:border-primary">
+                  <AvatarImage src={profile?.image_url} />
+                  <AvatarFallback className="text-xl bg-primary/10">
+                    {profile?.name ? profile.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Settings className="h-6 w-6 text-white" />
+                </div>
+              </button>
+              
+              <div className="flex w-full gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1 gap-2"
+                  onClick={() => setShowProfileModal(true)}
+                >
+                  <Settings className="h-4 w-4" />
+                  Account
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="px-3"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -638,7 +687,17 @@ export default function DashboardPage() {
           userId={user.id}
         />
       )}
+
+      {user && (
+        <ProfileModal
+          isOpen={showProfileModal}
+          onClose={() => setShowProfileModal(false)}
+          userId={user.id}
+          onProfileUpdate={loadProfile}
+        />
+      )}
     </div>
   );
 }
+
 
