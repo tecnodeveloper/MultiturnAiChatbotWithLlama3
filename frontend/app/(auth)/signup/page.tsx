@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
+import { Brand } from "@/components/ui/brand";
+
 export default function SignupPage() {
   const router = useRouter();
   const { signUp, signInWithGoogle, isLoading } = useAuth();
@@ -61,18 +63,10 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-black p-4">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-sm:max-w-sm">
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-12">
-          <Image
-            src="/img/imageLogo.png"
-            alt="Chatbot Logo"
-            width={80}
-            height={80}
-            style={{ width: "auto", height: "auto" }}
-            className="mb-4"
-            priority
-          />
+          <Brand size="xl" showText={false} className="mb-4" />
         </div>
 
         {/* Form Section */}

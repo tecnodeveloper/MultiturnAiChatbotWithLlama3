@@ -48,6 +48,8 @@ interface Chat {
   createdAt: string;
 }
 
+import { Brand } from "@/components/ui/brand";
+
 export default function DashboardPage() {
   const router = useRouter();
   const { user, logout } = useAuth();
@@ -374,25 +376,7 @@ export default function DashboardPage() {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center justify-between gap-3 border-b border-border p-4">
-            {sidebarOpen ? (
-              <Image
-                src="/img/imageLogo.png"
-                alt="Logo"
-                width={60}
-                height={60}
-                style={{ width: "auto", height: "auto" }}
-                className="rounded"
-              />
-            ) : (
-              <Image
-                src="/img/imageLogo.png"
-                alt="Logo"
-                width={40}
-                height={40}
-                style={{ width: "auto", height: "auto" }}
-                className="rounded"
-              />
-            )}
+            <Brand size={sidebarOpen ? "md" : "sm"} showText={sidebarOpen} />
             <Button
               variant="ghost"
               size="icon"
@@ -507,14 +491,7 @@ export default function DashboardPage() {
         <div className="flex-1 overflow-y-auto p-6">
           {!currentChat ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
-              <Image
-                src="/img/imageLogo.png"
-                alt="Logo"
-                width={120}
-                height={120}
-                style={{ width: "auto", height: "auto" }}
-                className="rounded"
-              />
+              <Brand size="xl" showText={false} />
               <div>
                 <h2 className="text-2xl font-semibold">Welcome to MultiTurn AI</h2>
                 <p className="text-sm text-muted-foreground">

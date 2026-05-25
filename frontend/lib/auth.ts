@@ -17,13 +17,15 @@ export async function signInWithGoogle() {
 }
 
 export async function signInWithEmail(email: string, password: string) {
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
+  const response = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
   });
 
-  if (error) {
-    throw new Error(error.message || "Failed to sign in");
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || "Failed to sign in");
   }
 }
 
@@ -32,23 +34,26 @@ export async function signUpWithEmail(
   password: string,
   name: string,
 ) {
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { name },
-    },
+  const response = await fetch("/api/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password, name }),
   });
 
-  if (error) {
-    throw new Error(error.message || "Failed to sign up");
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || "Failed to sign up");
   }
 }
 
 export async function signOut() {
-  const { error } = await supabase.auth.signOut();
+  const response = await fetch("/api/auth/logout", {
+    method: "POST",
+  });
 
-  if (error) {
-    throw new Error(error.message || "Failed to sign out");
+  if (!response.ok) {
+    const data = await response.json();
+    throw new Error(data.error || "Failed to sign out");
   }
 }
+

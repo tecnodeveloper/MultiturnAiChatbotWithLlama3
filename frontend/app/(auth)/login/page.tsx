@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
+import { Brand } from "@/components/ui/brand";
+
 export default function LoginPage() {
   const router = useRouter();
   const { signIn, signInWithGoogle, isLoading } = useAuth();
@@ -52,15 +54,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-12">
-          <Image
-            src="/img/imageLogo.png"
-            alt="Chatbot Logo"
-            width={80}
-            height={80}
-            style={{ width: "auto", height: "auto" }}
-            className="mb-4"
-            priority
-          />
+          <Brand size="xl" showText={false} className="mb-4" />
         </div>
 
         {/* Form Section */}
