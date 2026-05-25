@@ -20,108 +20,19 @@ Phase 1 focuses on building the complete system foundation including:
 
 ---
 
-# Functional Requirements
-
-## FR1: System Initialization
-
-The system initializes the following modules during startup:
-
-- LLaMA 3 local model loading
-- Backend server initialization
-- Database connection setup
-- Analytics module initialization
-
----
-
-## FR2: Frontend Chat Interface Development
-
-The system provides a web-based chat UI including:
-
-- Google OAuth login page
-- Chat interface (user input + response display)
-- Feedback panel
-  - Rating
-  - Correctness
-  - Response length type
-
----
-
-## FR3: Backend Server Development
-
-The backend is developed using Flask or FastAPI and handles:
-
-- User authentication
-- Session creation and management
-- Message routing to model
-- Data storage operations
-
----
-
-## FR4: LLaMA 3 Model Integration
-
-The chatbot integrates LLaMA 3 as the core chatbot engine.
-
-Features:
-
-- Local AI inference
-- Multi-turn conversation support
-- Prompt-response processing
-
----
-
-## FR5: Service Connectivity
-
-The system connects:
-
-- Frontend UI
-- Backend API
-- LLaMA 3 inference engine
-- Database
-- Analytics module
-
----
-
-# Suggested Tech Stack
-
-The university/project guideline suggested the following stack:
-
-| Technology                    | Purpose                 |
-| ----------------------------- | ----------------------- |
-| Python                        | Backend development     |
-| LLaMA 3                       | AI chatbot engine       |
-| Flask / FastAPI               | Backend APIs            |
-| HTML/CSS/JavaScript           | Frontend UI             |
-| MongoDB / Firebase            | Database                |
-| pandas                        | Data analytics          |
-| matplotlib / seaborn / plotly | Graph generation        |
-| scikit-learn                  | Analytics support       |
-| Ollama                        | Local LLaMA serving     |
-| Google OAuth 2.0              | Authentication          |
-| VS Code / Jupyter Notebook    | Development environment |
-
----
-
 # Updated Tech Stack
 
 I'm facing difficulty running **LLaMA 3 locally** due to limited hardware resources So I'm using grok or openRouter api
 
 This project uses an upgraded modern stack while maintaining all required functionality.
 
-| Technology                    | Purpose             |
-| ----------------------------- | ------------------- |
-| Python                        | Backend development |
-| FastAPI / Flask               | Backend APIs        |
-| Next.js                       | Frontend framework  |
-| React                         | Component-based UI  |
-| Tailwind CSS                  | Frontend styling    |
-| LLaMA 3                       | AI chatbot engine   |
-| Ollama                        | Local LLaMA serving |
-| Supabase                      | Database            |
-| pandas                        | Data analytics      |
-| matplotlib / seaborn / plotly | Graph generation    |
-| scikit-learn                  | Analytics support   |
-| Google OAuth 2.0              | Authentication      |
-| VS Code / Jupyter Notebook    | Development tools   |
+| Technology      | Purpose             |
+| --------------- | ------------------- |
+| Python          | Backend development |
+| FastAPI / Flask | Backend APIs        |
+| Next.js         | Frontend framework  |
+| Ollama          | Local LLaMA serving |
+| Supabase        | Database            |
 
 ---
 
@@ -221,72 +132,12 @@ Responsible for:
 
 ---
 
-# Project Workflow
-
-```text
-Login / Signup
-       ↓
-Google Authentication
-       ↓
-Dashboard
-       ↓
-Chat Interface
-       ↓
-User Sends Message
-       ↓
-Backend API
-       ↓
-LLaMA 3 Processing
-       ↓
-AI Response Returned
-       ↓
-Feedback Collection
-       ↓
-Analytics Processing
-```
-
----
-
 # Requirements
 
+- docker
+- supabase cli
 - Python > 3.8
 - Next.js 16.2.6 stable versio
-
-## Running
-
-```bash
-uv app.py
-```
-
----
-
-# Google OAuth Setup
-
-1. Open Google Cloud Console:
-   [Google Cloud Console](https://console.cloud.google.com/?utm_source=chatgpt.com)
-
-2. Create a new project.
-
-3. Enable OAuth 2.0 APIs.
-
-4. Create OAuth credentials.
-
-5. Add authorized redirect URIs.
-
-6. Save:
-
-- Client ID
-- Client Secret
-
----
-
-# Future Enhancements
-
-- Voice chatbot integration
-- Real-time streaming responses
-- Admin dashboard
-- Conversation summarization
-- User personalization
 
 ---
 
@@ -300,7 +151,7 @@ Skype ID: neelam-cs
 
 ---
 
-# Final Notes
+# Output
 
 - This project is implementation-based and not an SRS document.
 - Focus on developing working modules and integrations.
