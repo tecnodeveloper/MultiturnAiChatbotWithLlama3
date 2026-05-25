@@ -151,8 +151,8 @@ export default function DashboardPage() {
           <div className="flex items-center justify-between gap-3 border-b border-border p-4">
             {sidebarOpen ? (
               <Image
-                src="/img/TabIconMultiturnAI.PNG"
-                alt="Chatbot Icon"
+                src="/img/imageLogo.png"
+                alt="Logo"
                 width={40}
                 height={40}
                 style={{ width: "auto", height: "auto" }}
@@ -160,8 +160,8 @@ export default function DashboardPage() {
               />
             ) : (
               <Image
-                src="/img/TabIconMultiturnAI.PNG"
-                alt="Chatbot Icon"
+                src="/img/imageLogo.png"
+                alt="Logo"
                 width={32}
                 height={32}
                 style={{ width: "auto", height: "auto" }}
@@ -268,8 +268,8 @@ export default function DashboardPage() {
           {!currentChat ? (
             <div className="flex h-full flex-col items-center justify-center gap-4 text-center">
               <Image
-                src="/img/TabIconMultiturnAI.PNG"
-                alt="MultiTurn AI Icon"
+                src="/img/imageLogo.png"
+                alt="Logo"
                 width={80}
                 height={80}
                 style={{ width: "auto", height: "auto" }}

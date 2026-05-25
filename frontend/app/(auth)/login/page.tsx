@@ -61,9 +61,6 @@ export default function LoginPage() {
             className="mb-4"
             priority
           />
-          <h1 className="text-4xl font-bold text-white text-center">
-            Chatbot UI
-          </h1>
         </div>
 
         {/* Form Section */}
