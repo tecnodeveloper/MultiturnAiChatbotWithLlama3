@@ -1,4 +1,4 @@
-import { createRouteClient } from "@/lib/supabase/route";
+import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -15,11 +15,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const response = new NextResponse(JSON.stringify({}), {
-    status: 200,
-    headers: { "Content-Type": "application/json" },
-  });
-  const supabase = createRouteClient(request, response);
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
@@ -32,9 +28,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
-  // Return the user data with the cookies set in the response headers
-  return new NextResponse(JSON.stringify({ user: data.user }), {
-    status: 200,
-    headers: response.headers,
-  });
+  // Force a session refresh/sync to ensure cookies are set
+  await supabase.auth.getUser();
+
+  return NextResponse.json({ user: data.user }, { status: 200 });
 }

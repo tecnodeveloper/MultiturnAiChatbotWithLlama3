@@ -9,8 +9,11 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  console.log("Proxy: path =", request.nextUrl.pathname, "user =", user?.email || "none");
+
   // Redirect to login if accessing dashboard without user
   if (!user && request.nextUrl.pathname.startsWith("/dashboard")) {
+    console.log("Proxy: No user for dashboard, redirecting to /login");
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
@@ -18,8 +21,10 @@ export async function proxy(request: NextRequest) {
   if (
     user &&
     (request.nextUrl.pathname === "/login" ||
-      request.nextUrl.pathname === "/signup")
+      request.nextUrl.pathname === "/signup" ||
+      request.nextUrl.pathname === "/")
   ) {
+    console.log("Proxy: User found for auth page, redirecting to /dashboard");
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 

@@ -41,7 +41,8 @@ export default function SignupPage() {
     try {
       setIsSigningUp(true);
       await signUp(email, password);
-      router.push("/dashboard");
+      // Use window.location.href for a full reload to ensure cookies are fresh
+      window.location.href = "/dashboard";
     } catch (error: any) {
       toast.error(error.message || "Failed to create account");
     } finally {

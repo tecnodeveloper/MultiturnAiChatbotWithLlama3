@@ -29,7 +29,8 @@ export default function LoginPage() {
     try {
       setIsSigningIn(true);
       await signIn(email, password);
-      router.push("/dashboard");
+      // Use window.location.href for a full reload to ensure cookies are fresh
+      window.location.href = "/dashboard";
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
     } finally {
