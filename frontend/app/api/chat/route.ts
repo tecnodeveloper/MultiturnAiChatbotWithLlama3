@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { messages, provider } = await req.json();
+    const { messages, provider, fileContexts } = await req.json();
 
     let apiKey = "";
     let baseURL = "";
@@ -37,9 +37,17 @@ export async function POST(req: Request) {
       baseURL: baseURL,
     });
 
+    const finalMessages = [...messages];
+    if (fileContexts) {
+      finalMessages.unshift({
+        role: "system",
+        content: `You have access to the following documents. Use them to answer questions accurately:\n\n${fileContexts}`,
+      });
+    }
+
     const response = await client.chat.completions.create({
       model: model,
-      messages: messages.map((m: any) => ({
+      messages: finalMessages.map((m: any) => ({
         role: m.role,
         content: m.content,
       })),

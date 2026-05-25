@@ -16,6 +16,9 @@ import {
   Send,
   Settings,
   Trash2,
+  Paperclip,
+  X,
+  FileText,
 } from "lucide-react";
 import {
   createChat,
@@ -24,7 +27,46 @@ import {
   getChats,
   getMessagesByChatId,
   updateChat,
+  uploadFile,
+  getFilesByChatId,
 } from "@/db";
+
+// ... inside DashboardPage
+  const [isUploading, setIsUploading] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<any[]>([]);
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    setIsUploading(true);
+    try {
+      // Create chat if doesn't exist
+      let chatId = currentChatId;
+      if (!chatId) {
+        const newChat = await createChat({
+          title: file.name.slice(0, 42),
+          user_id: user.id,
+        });
+        chatId = newChat.id;
+        setCurrentChatId(chatId);
+        setChats([{
+          id: newChat.id,
+          title: newChat.title,
+          messages: [],
+          createdAt: newChat.created_at
+        }, ...chats]);
+      }
+
+      const uploaded = await uploadFile(file, chatId, user.id);
+      setAttachedFiles(prev => [...prev, uploaded]);
+      toast.success(`Uploaded ${file.name}`);
+    } catch (error) {
+      toast.error("Failed to upload file");
+    } finally {
+      setIsUploading(false);
+    }
+  };
 import { consumeReadableStream } from "@/lib/consume-stream";
 import { FeedbackModal } from "@/components/feedback-modal";
 
@@ -260,6 +302,9 @@ export default function DashboardPage() {
         content: fullContent,
         user_id: user.id,
       });
+
+      // Clear attachments after successful send
+      setAttachedFiles([]);
 
       // Update local state with the actual DB ID and timestamp
       setChats((prev) =>
@@ -518,17 +563,56 @@ export default function DashboardPage() {
         </div>
 
         <div className="border-t border-border p-4">
-          <form onSubmit={handleSendMessage} className="mx-auto flex w-full max-w-4xl gap-3">
-            <Input
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              placeholder="Message MultiTurn AI..."
-              className="h-12"
-            />
-            <Button type="submit" disabled={!message.trim() || isSending}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </form>
+          <div className="mx-auto max-w-4xl">
+            {attachedFiles.length > 0 && (
+              <div className="mb-3 flex flex-wrap gap-2">
+                {attachedFiles.map((file) => (
+                  <div
+                    key={file.id}
+                    className="flex items-center gap-2 rounded-lg bg-muted px-3 py-1.5 text-xs"
+                  >
+                    <FileText className="h-3.5 w-3.5" />
+                    <span className="max-w-[150px] truncate">{file.name}</span>
+                    <button
+                      onClick={() =>
+                        setAttachedFiles((prev) =>
+                          prev.filter((f) => f.id !== file.id),
+                        )
+                      }
+                      className="text-muted-foreground hover:text-foreground"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <form onSubmit={handleSendMessage} className="flex w-full gap-3">
+              <div className="relative flex flex-1 items-center">
+                <Input
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Message MultiTurn AI..."
+                  className="h-12 pl-12"
+                  disabled={isSending}
+                />
+                <div className="absolute left-2 flex items-center">
+                  <label className="cursor-pointer rounded-full p-2 hover:bg-muted">
+                    <Paperclip className="h-5 w-5 text-muted-foreground" />
+                    <input
+                      type="file"
+                      className="hidden"
+                      onChange={handleFileUpload}
+                      disabled={isUploading || isSending}
+                    />
+                  </label>
+                </div>
+              </div>
+              <Button type="submit" disabled={!message.trim() || isSending}>
+                <Send className="h-4 w-4" />
+              </Button>
+            </form>
+          </div>
         </div>
       </main>
 
