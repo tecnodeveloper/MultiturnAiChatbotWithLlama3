@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description:
     "An intelligent multi-turn conversation interface powered by Llama 3 and multiple AI providers",
   icons: {
-    icon: "/logo.png",
+    icon: "/img/TabIconMultiturnAI.png",
   },
 };
 

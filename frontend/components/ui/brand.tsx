@@ -20,7 +20,7 @@ export function Brand({ className, showText = true, size = "md" }: BrandProps) {
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <Image
-        src="/logo.png"
+        src="/img/imageLogo.png"
         alt="MultiTurn AI"
         width={dim.width}
         height={dim.height}

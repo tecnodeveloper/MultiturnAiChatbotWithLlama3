@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useAuth } from "@/context/auth-context";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -17,8 +17,19 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
+import {
+  createChat,
+  createMessage,
+  deleteChat,
+  getChats,
+  getMessagesByChatId,
+  updateChat,
+} from "@/db";
+import { consumeReadableStream } from "@/lib/consume-stream";
+import { FeedbackModal } from "@/components/feedback-modal";
 
 interface Message {
+  id?: string;
   role: "user" | "assistant";
   content: string;
   timestamp?: string;
@@ -39,99 +50,265 @@ export default function DashboardPage() {
   const [isSending, setIsSending] = useState(false);
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState("Groq");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
   useEffect(() => {
-    const savedChats = localStorage.getItem("mtai-chats");
-    if (savedChats) {
-      try {
-        const parsedChats = JSON.parse(savedChats) as Chat[];
-        setChats(parsedChats);
-        setCurrentChatId(parsedChats[0]?.id ?? null);
-      } catch {
-        localStorage.removeItem("mtai-chats");
-      }
+    if (currentChat?.messages.length || isSending) {
+      scrollToBottom();
     }
-  }, []);
+  }, [currentChat?.messages, isSending]);
+
+  useEffect(() => {
+    const loadChats = async () => {
+      if (!user) return;
+      try {
+        const fetchedChats = await getChats();
+        const chatsWithMessages = await Promise.all(
+          fetchedChats.map(async (chat: any) => {
+            const messages = await getMessagesByChatId(chat.id);
+            return {
+              id: chat.id,
+              title: chat.title,
+              createdAt: chat.created_at,
+              messages: messages.map((m: any) => ({
+                id: m.id,
+                role: m.role,
+                content: m.content,
+                timestamp: m.created_at,
+              })),
+            };
+          }),
+        );
+        setChats(chatsWithMessages);
+        if (chatsWithMessages.length > 0 && !currentChatId) {
+          setCurrentChatId(chatsWithMessages[0].id);
+        }
+      } catch (error) {
+        console.error("Failed to load chats:", error);
+        toast.error("Failed to load your chats");
+      }
+    };
+
+    loadChats();
+  }, [user]);
 
   const currentChat = useMemo(
-    () => chats.find(chat => chat.id === currentChatId) ?? null,
+    () => chats.find((chat) => chat.id === currentChatId) ?? null,
     [chats, currentChatId],
   );
 
-  const handleNewChat = () => {
-    const nextChat: Chat = {
-      id: crypto.randomUUID(),
-      title: "New Chat",
-      messages: [],
-      createdAt: new Date().toISOString(),
-    };
+  const handleNewChat = async () => {
+    if (!user) return;
+    try {
+      const newChat = await createChat({ title: "New Chat", user_id: user.id });
+      const nextChat: Chat = {
+        id: newChat.id,
+        title: newChat.title,
+        messages: [],
+        createdAt: newChat.created_at,
+      };
 
-    const updated = [nextChat, ...chats];
-    setChats(updated);
-    setCurrentChatId(nextChat.id);
-    localStorage.setItem("mtai-chats", JSON.stringify(updated));
+      setChats([nextChat, ...chats]);
+      setCurrentChatId(newChat.id);
+    } catch (error) {
+      toast.error("Failed to create new chat");
+    }
   };
 
-  const handleDeleteChat = (chatId: string) => {
-    const updated = chats.filter(chat => chat.id !== chatId);
-    setChats(updated);
-    localStorage.setItem("mtai-chats", JSON.stringify(updated));
+  const handleDeleteChat = async (chatId: string) => {
+    try {
+      await deleteChat(chatId);
+      const updated = chats.filter((chat) => chat.id !== chatId);
+      setChats(updated);
 
-    if (currentChatId === chatId) {
-      setCurrentChatId(updated[0]?.id ?? null);
+      if (currentChatId === chatId) {
+        setCurrentChatId(updated[0]?.id ?? null);
+      }
+      toast.success("Chat deleted");
+    } catch (error) {
+      toast.error("Failed to delete chat");
     }
   };
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!message.trim()) {
+    if (!message.trim() || !user || isSending) {
       return;
     }
 
+    const userContent = message.trim();
+    setMessage("");
     setIsSending(true);
 
-    const chatId = currentChatId ?? crypto.randomUUID();
-    const chat =
-      chats.find(item => item.id === chatId) ??
-      ({
-        id: chatId,
-        title: "New Chat",
-        messages: [],
-        createdAt: new Date().toISOString(),
-      } as Chat);
+    try {
+      let chatId = currentChatId;
+      let activeChat = currentChat;
 
-    const userMessage: Message = {
-      role: "user",
-      content: message.trim(),
-      timestamp: new Date().toISOString(),
-    };
+      // If no current chat, create one
+      if (!chatId) {
+        const newChat = await createChat({
+          title: userContent.slice(0, 42),
+          user_id: user.id,
+        });
+        chatId = newChat.id;
+        activeChat = {
+          id: newChat.id,
+          title: newChat.title,
+          messages: [],
+          createdAt: newChat.created_at,
+        };
+        setChats([activeChat, ...chats]);
+        setCurrentChatId(chatId);
+      }
 
-    const assistantMessage: Message = {
-      role: "assistant",
-      content:
-        "This is the MultiTurn AI dashboard shell. Next step is wiring this UI to Supabase chat persistence and AI responses.",
-      timestamp: new Date().toISOString(),
-    };
+      // Save user message to DB
+      const userMsg = await createMessage({
+        chat_id: chatId,
+        role: "user",
+        content: userContent,
+        user_id: user.id,
+      });
 
-    const updatedChat = {
-      ...chat,
-      title:
-        chat.messages.length === 0
-          ? message.trim().slice(0, 42)
-          : chat.title,
-      messages: [...chat.messages, userMessage, assistantMessage],
-    };
+      const userMessage: Message = {
+        id: userMsg.id,
+        role: "user",
+        content: userContent,
+        timestamp: userMsg.created_at,
+      };
 
-    const nextChats = chat.messages.length === 0
-      ? [updatedChat, ...chats.filter(item => item.id !== chatId)]
-      : chats.map(item => (item.id === chatId ? updatedChat : item));
+      // Update local state with user message
+      setChats((prev) =>
+        prev.map((c) =>
+          c.id === chatId ? { ...c, messages: [...c.messages, userMessage] } : c,
+        ),
+      );
 
-    setChats(nextChats);
-    setCurrentChatId(chatId);
-    localStorage.setItem("mtai-chats", JSON.stringify(nextChats));
-    setMessage("");
-    setIsSending(false);
+      // Prepare for AI response
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [...(activeChat?.messages || []), userMessage],
+          provider: selectedProvider,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to get AI response");
+      }
+
+      if (!response.body) {
+        throw new Error("No response body");
+      }
+
+      // Create a placeholder assistant message in local state
+      const assistantId = crypto.randomUUID();
+      const assistantMessage: Message = {
+        id: assistantId,
+        role: "assistant",
+        content: "",
+        timestamp: new Date().toISOString(),
+      };
+
+      setChats((prev) =>
+        prev.map((c) =>
+          c.id === chatId
+            ? { ...c, messages: [...c.messages, assistantMessage] }
+            : c,
+        ),
+      );
+
+      let fullContent = "";
+
+      await consumeReadableStream(
+        response.body,
+        (chunk) => {
+          fullContent += chunk;
+          setChats((prev) =>
+            prev.map((c) =>
+              c.id === chatId
+                ? {
+                    ...c,
+                    messages: c.messages.map((m) =>
+                      m.id === assistantId ? { ...m, content: fullContent } : m,
+                    ),
+                  }
+                : c,
+            ),
+          );
+        },
+        controller.signal,
+      );
+
+      // Save full assistant message to DB
+      const savedAssistantMsg = await createMessage({
+        chat_id: chatId!,
+        role: "assistant",
+        content: fullContent,
+        user_id: user.id,
+      });
+
+      // Update local state with the actual DB ID and timestamp
+      setChats((prev) =>
+        prev.map((c) =>
+          c.id === chatId
+            ? {
+                ...c,
+                messages: c.messages.map((m) =>
+                  m.id === assistantId
+                    ? {
+                        ...m,
+                        id: savedAssistantMsg.id,
+                        timestamp: savedAssistantMsg.created_at,
+                      }
+                    : m,
+                ),
+              }
+            : c,
+        ),
+      );
+
+      // If title was "New Chat", update it
+      if (activeChat?.title === "New Chat") {
+        const newTitle = userContent.slice(0, 42);
+        await updateChat(chatId!, { title: newTitle });
+        setChats((prev) =>
+          prev.map((c) => (c.id === chatId ? { ...c, title: newTitle } : c)),
+        );
+      }
+
+      // Trigger feedback modal after 6 user messages
+      const userMessageCount = [
+        ...(activeChat?.messages || []),
+        userMessage,
+      ].filter((m) => m.role === "user").length;
+      if (userMessageCount === 6) {
+        setShowFeedbackModal(true);
+      }
+    } catch (error: any) {
+      if (error.name === "AbortError") {
+        console.log("Fetch aborted");
+      } else {
+        toast.error(error.message || "Failed to send message");
+        console.error(error);
+      }
+    } finally {
+      setIsSending(false);
+      abortControllerRef.current = null;
+    }
   };
 
   const handleLogout = async () => {
@@ -153,8 +330,8 @@ export default function DashboardPage() {
               <Image
                 src="/img/imageLogo.png"
                 alt="Logo"
-                width={40}
-                height={40}
+                width={60}
+                height={60}
                 style={{ width: "auto", height: "auto" }}
                 className="rounded"
               />
@@ -162,8 +339,8 @@ export default function DashboardPage() {
               <Image
                 src="/img/imageLogo.png"
                 alt="Logo"
-                width={32}
-                height={32}
+                width={40}
+                height={40}
                 style={{ width: "auto", height: "auto" }}
                 className="rounded"
               />
@@ -256,10 +433,14 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <select className="h-10 rounded-md border border-border bg-background px-3 text-sm">
-              <option>Groq</option>
-              <option>OpenRouter</option>
-              <option>Ollama</option>
+            <select
+              value={selectedProvider}
+              onChange={(e) => setSelectedProvider(e.target.value)}
+              className="h-10 rounded-md border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+            >
+              <option value="Groq">Groq</option>
+              <option value="OpenRouter">OpenRouter</option>
+              <option value="Ollama">Ollama</option>
             </select>
           </div>
         </header>
@@ -270,8 +451,8 @@ export default function DashboardPage() {
               <Image
                 src="/img/imageLogo.png"
                 alt="Logo"
-                width={80}
-                height={80}
+                width={120}
+                height={120}
                 style={{ width: "auto", height: "auto" }}
                 className="rounded"
               />
@@ -331,6 +512,7 @@ export default function DashboardPage() {
                   </div>
                 </div>
               )}
+              <div ref={messagesEndRef} />
             </div>
           )}
         </div>
@@ -349,6 +531,15 @@ export default function DashboardPage() {
           </form>
         </div>
       </main>
+
+      {user && currentChatId && (
+        <FeedbackModal
+          isOpen={showFeedbackModal}
+          onClose={() => setShowFeedbackModal(false)}
+          chatId={currentChatId}
+          userId={user.id}
+        />
+      )}
     </div>
   );
 }
