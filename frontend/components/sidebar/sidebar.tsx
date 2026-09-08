@@ -12,7 +12,7 @@ import {
   MessageSquare, 
   LayoutGrid, 
   Settings, 
-  Users, 
+  BarChart3, 
   Edit,
   PanelLeft,
   MoreHorizontal,
@@ -58,13 +58,13 @@ export const Sidebar: FC<SidebarProps> = ({
     setSearchTerm,
   } = useChat();
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<"projects" | "chats" | "templates" | "settings" | "teams">("chats");
+  const [activeTab, setActiveTab] = useState<"projects" | "chats" | "templates" | "settings" | "analytics">("chats");
 
   // Inline Title Editing State
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
 
-  const effectiveActiveTab = pathname === "/projects" ? "projects" : activeTab;
+  const effectiveActiveTab = pathname === "/projects" ? "projects" : pathname === "/analytics" ? "analytics" : pathname === "/account" ? "settings" : activeTab;
 
   const handleNavClick = (id: string) => {
     setActiveTab(id as any);
@@ -74,6 +74,8 @@ export const Sidebar: FC<SidebarProps> = ({
       router.push("/dashboard");
     } else if (id === "analytics") {
       router.push("/analytics");
+    } else if (id === "settings") {
+      router.push("/account");
     }
   };
 
@@ -111,8 +113,8 @@ export const Sidebar: FC<SidebarProps> = ({
     { id: "projects", label: "My projects", icon: <Folder className="h-4 w-4 shrink-0" /> },
     { id: "chats", label: "Chats", icon: <MessageSquare className="h-4 w-4 shrink-0" /> },
     { id: "templates", label: "Templates", icon: <LayoutGrid className="h-4 w-4 shrink-0" /> },
+    { id: "analytics", label: "Analytics", icon: <BarChart3 className="h-4 w-4 shrink-0" /> },
     { id: "settings", label: "Settings", icon: <Settings className="h-4 w-4 shrink-0" /> },
-    { id: "teams", label: "Teams", icon: <Users className="h-4 w-4 shrink-0" /> },
   ];
 
   return (
@@ -180,7 +182,7 @@ export const Sidebar: FC<SidebarProps> = ({
       <div className="px-3 py-1 space-y-1">
         {!collapsed && (
           <div className="text-[11px] font-semibold text-[#64748b] dark:text-slate-500 uppercase tracking-wider px-2 py-1">
-            Settings
+            Navigation
           </div>
         )}
         {NAV_ITEMS.map((item) => (

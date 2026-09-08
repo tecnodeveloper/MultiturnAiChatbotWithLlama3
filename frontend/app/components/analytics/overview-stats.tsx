@@ -18,32 +18,28 @@ export const OverviewStats: FC<OverviewStatsProps> = ({ data }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
       <StatCard
-        title="Accuracy Rate"
+        title="Accuracy rate"
         value={`${accuracyRate}%`}
-        subtitle="Correct + Partial"
+        subtitle="Correct + partial"
         icon={<Target className="h-6 w-6" />}
-        iconBgColor="bg-secondary/10 text-secondary"
       />
       <StatCard
-        title="Total Feedback"
+        title="Total feedback"
         value={totalFeedback.toLocaleString()}
         subtitle="Across all chats"
         icon={<MessageCircle className="h-6 w-6" />}
-        iconBgColor="bg-blue-500/10 text-blue-500"
       />
       <StatCard
-        title="Average Rating"
+        title="Average rating"
         value={avgRating.toFixed(1)}
         subtitle="Out of 5 stars"
         icon={<ThumbsUp className="h-6 w-6" />}
-        iconBgColor="bg-secondary/10 text-secondary"
       />
       <StatCard
-        title="Responses Found"
+        title="Responses found"
         value={data?.raw_data_count?.toString() || "0"}
         subtitle="Analyzed data points"
         icon={<Award className="h-6 w-6" />}
-        iconBgColor="bg-purple-500/10 text-purple-500"
       />
     </div>
   );

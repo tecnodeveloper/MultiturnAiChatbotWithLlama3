@@ -4,6 +4,7 @@ import { FC } from "react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { AnalyticsData } from "@/hooks/use-analytics";
 import { useTheme } from "next-themes";
+import { ANALYTICS_TOKENS } from "./tokens";
 
 interface FeedbackDistributionChartProps {
   data: AnalyticsData | null;
@@ -20,22 +21,22 @@ export const FeedbackDistributionChart: FC<FeedbackDistributionChartProps> = ({
     {
       name: "Helpful",
       value: correctness.correct || 0,
-      color: isDark ? "#3b82f6" : "#a8c686",
+      color: ANALYTICS_TOKENS.accent,
     },
     {
-      name: "Not Helpful",
-      value: correctness.incorrect || 0,
-      color: isDark ? "#ef4444" : "#e57373",
-    },
-    {
-      name: "Partially Helpful",
+      name: "Partially helpful",
       value: correctness.partial || 0,
-      color: isDark ? "#f59e0b" : "#ffb74d",
+      color: isDark ? "rgba(245, 166, 35, 0.55)" : "rgba(245, 166, 35, 0.65)",
     },
     {
-      name: "No Feedback",
+      name: "Not helpful",
+      value: correctness.incorrect || 0,
+      color: isDark ? "#71717a" : "#9ca3af",
+    },
+    {
+      name: "No feedback",
       value: correctness.none || 0,
-      color: isDark ? "#374151" : "#e0e0e0",
+      color: isDark ? "#27272a" : "#e2e8f0",
     },
   ].filter((item) => item.value > 0);
 
@@ -55,11 +56,11 @@ export const FeedbackDistributionChart: FC<FeedbackDistributionChartProps> = ({
       <text
         x={x}
         y={y}
-        fill="white"
+        fill="#0f1117"
         textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
-        fontSize={12}
-        fontWeight="bold"
+        fontSize={11}
+        fontWeight={500}
       >
         {`${(percent * 100).toFixed(0)}%`}
       </text>
@@ -68,8 +69,8 @@ export const FeedbackDistributionChart: FC<FeedbackDistributionChartProps> = ({
 
   return (
     <div className="bg-card rounded-2xl shadow-sm p-6 flex flex-col gap-6 h-full border border-border">
-      <h3 className="text-lg font-bold text-foreground">
-        User Feedback Distribution
+      <h3 className="text-[16px] font-medium text-foreground">
+        User feedback distribution
       </h3>
 
       <div className="h-[250px] w-full">
@@ -83,27 +84,27 @@ export const FeedbackDistributionChart: FC<FeedbackDistributionChartProps> = ({
                 labelLine={false}
                 label={renderCustomizedLabel}
                 outerRadius={100}
-                fill="#8884d8"
                 dataKey="value"
               >
                 {chartData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`cell-${index}`} fill={entry.color} stroke={isDark ? ANALYTICS_TOKENS.surface.cardDark : ANALYTICS_TOKENS.surface.cardLight} strokeWidth={2} />
                 ))}
               </Pie>
               <Tooltip
                 contentStyle={{
                   borderRadius: "12px",
-                  border: "none",
-                  boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
-                  backgroundColor: isDark ? "#161821" : "#ffffff",
-                  color: isDark ? "#ffffff" : "#111827",
+                  border: isDark ? `1px solid ${ANALYTICS_TOKENS.neutral.darkest}` : `1px solid ${ANALYTICS_TOKENS.surface.borderLight}`,
+                  boxShadow: "0 4px 12px rgba(0, 0, 0, 0.25)",
+                  backgroundColor: isDark ? ANALYTICS_TOKENS.surface.cardDark : ANALYTICS_TOKENS.surface.cardLight,
+                  color: isDark ? ANALYTICS_TOKENS.text.primaryDark : ANALYTICS_TOKENS.text.primaryLight,
+                  fontSize: 12,
                 }}
                 formatter={(value: any) => [`${value}%`, "Percentage"]}
               />
             </PieChart>
           </ResponsiveContainer>
         ) : (
-          <div className="h-full flex items-center justify-center text-muted-foreground italic">
+          <div className="h-full flex items-center justify-center text-[12px] font-normal text-muted-foreground italic">
             No feedback data available
           </div>
         )}
@@ -113,12 +114,12 @@ export const FeedbackDistributionChart: FC<FeedbackDistributionChartProps> = ({
         {chartData.map((item) => (
           <div key={item.name} className="flex items-center gap-2">
             <div
-              className="w-3 h-3 rounded-full"
+              className="w-2.5 h-2.5 rounded-full shrink-0"
               style={{ backgroundColor: item.color }}
             />
             <div className="flex flex-col">
-              <span className="text-xs text-muted-foreground">{item.name}</span>
-              <span className="text-sm font-bold text-foreground">
+              <span className="text-[12px] font-normal text-muted-foreground">{item.name}</span>
+              <span className="text-[13px] font-medium text-foreground">
                 {item.value}%
               </span>
             </div>

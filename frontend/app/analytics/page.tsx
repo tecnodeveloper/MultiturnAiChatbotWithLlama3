@@ -19,8 +19,8 @@ const AnalyticsPage: FC = () => {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-          <p className="text-primary font-medium">Loading Analytics Data...</p>
+          <Loader2 className="h-10 w-10 animate-spin text-[#f5a623]" />
+          <p className="text-[#f5a623] text-[13px] font-medium">Loading analytics data...</p>
         </div>
       </div>
     );
@@ -29,10 +29,10 @@ const AnalyticsPage: FC = () => {
   if (error) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
-        <div className="rounded-xl bg-card p-8 shadow-xl text-center border border-border">
-          <h2 className="text-xl font-bold text-destructive mb-2">Error Loading Analytics</h2>
-          <p className="text-muted-foreground mb-4">{error}</p>
-          <p className="text-xs text-muted-foreground/60">Ensure the analytics backend service is running on port 5001.</p>
+        <div className="rounded-xl bg-card p-8 shadow-xl text-center border border-border max-w-md">
+          <h2 className="text-[16px] font-medium text-foreground mb-2">Error loading analytics</h2>
+          <p className="text-[12.5px] font-normal text-muted-foreground mb-4">{error}</p>
+          <p className="text-[11px] font-normal text-muted-foreground/60">Please ensure network connectivity and database access.</p>
         </div>
       </div>
     );

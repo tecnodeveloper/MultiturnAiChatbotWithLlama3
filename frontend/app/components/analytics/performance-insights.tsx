@@ -12,13 +12,13 @@ interface InsightProps {
 }
 
 const InsightCard: FC<InsightProps> = ({ icon, title, description, bgColor, iconColor, borderColor }) => (
-  <div className={`${bgColor} border ${borderColor} rounded-xl p-4 flex gap-4 items-start shadow-sm`}>
+  <div className={`${bgColor} border ${borderColor} rounded-xl p-4 flex gap-3.5 items-start shadow-sm transition-colors`}>
     <div className={`${iconColor} mt-0.5 shrink-0`}>
       {icon}
     </div>
     <div className="flex flex-col gap-1">
-      <h4 className="font-bold text-foreground text-sm">{title}</h4>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <h4 className="font-medium text-foreground text-[13.5px]">{title}</h4>
+      <p className="text-[12.5px] font-normal text-muted-foreground leading-relaxed">{description}</p>
     </div>
   </div>
 );
@@ -37,50 +37,50 @@ export const PerformanceInsights: FC<PerformanceInsightsProps> = ({ data: analyt
 
   return (
     <div className="bg-card rounded-2xl shadow-sm p-6 flex flex-col gap-6 h-full border border-border">
-      <h3 className="text-lg font-bold text-foreground">Performance Insights</h3>
-      <div className="flex flex-col gap-4">
+      <h3 className="text-[16px] font-medium text-foreground">Performance insights</h3>
+      <div className="flex flex-col gap-3.5">
         <InsightCard
-          icon={<CheckCircle className="h-5 w-5" />}
-          title="Accuracy Overview"
+          icon={<CheckCircle className="h-4 w-4" />}
+          title="Accuracy overview"
           description={`Your chatbot achieved ${accuracy}% accuracy overall. Consistently high quality responses across analyzed sessions.`}
-          bgColor="bg-green-500/10"
-          iconColor="text-green-500"
-          borderColor="border-green-500/20"
+          bgColor="bg-[#f5a623]/10"
+          iconColor="text-[#f5a623]"
+          borderColor="border-[#f5a623]/25"
         />
         <InsightCard
-          icon={<ThumbsUp className="h-5 w-5" />}
-          title="User Satisfaction"
-          description={`${helpfulPct}% of users explicitly marked responses as helpful. Average rating is ${avgRating}/5 stars.`}
-          bgColor="bg-blue-500/10"
-          iconColor="text-blue-500"
-          borderColor="border-blue-500/20"
+          icon={<ThumbsUp className="h-4 w-4" />}
+          title="User satisfaction"
+          description={`${helpfulPct}% of users marked responses as helpful. Average rating is ${avgRating}/4 stars.`}
+          bgColor="bg-muted/20"
+          iconColor="text-[#f5a623]"
+          borderColor="border-border/60"
         />
         {parseFloat(accuracy) < 90 && (
           <InsightCard
-            icon={<AlertCircle className="h-5 w-5" />}
-            title="Improvement Opportunity"
-            description="Accuracy is below 90%. Review 'Partially Helpful' feedback to identify areas for refinement."
-            bgColor="bg-amber-500/10"
-            iconColor="text-amber-500"
-            borderColor="border-amber-500/20"
+            icon={<AlertCircle className="h-4 w-4" />}
+            title="Improvement opportunity"
+            description="Accuracy is below 90%. Review partially helpful feedback to identify areas for refinement."
+            bgColor="bg-muted/20"
+            iconColor="text-[#f5a623]/80"
+            borderColor="border-border/60"
           />
         )}
         <InsightCard
-          icon={<Target className="h-5 w-5" />}
-          title="Data Coverage"
+          icon={<Target className="h-4 w-4" />}
+          title="Data coverage"
           description={`${totalFeedback} total feedback points analyzed. Larger sample sizes will provide more robust topic clustering.`}
-          bgColor="bg-purple-500/10"
-          iconColor="text-purple-500"
-          borderColor="border-purple-500/20"
+          bgColor="bg-muted/20"
+          iconColor="text-muted-foreground"
+          borderColor="border-border/60"
         />
         {negativeCount > 0 && (
           <InsightCard
-            icon={<XCircle className="h-5 w-5" />}
-            title="Negative Feedback"
+            icon={<XCircle className="h-4 w-4" />}
+            title="Negative feedback"
             description={`${negativeCount} responses received low ratings. Analyze these specific cases to improve model performance.`}
-            bgColor="bg-destructive/10"
-            iconColor="text-destructive"
-            borderColor="border-destructive/20"
+            bgColor="bg-muted/20"
+            iconColor="text-muted-foreground"
+            borderColor="border-border/60"
           />
         )}
       </div>

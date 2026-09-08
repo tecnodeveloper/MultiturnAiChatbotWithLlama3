@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAuth } from "@/context/auth-context";
 
 export interface AnalyticsData {
   summary: {
@@ -44,6 +45,7 @@ export interface AnalyticsData {
 }
 
 export function useAnalytics() {
+  const { user } = useAuth();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -51,8 +53,14 @@ export function useAnalytics() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-        const response = await fetch(`${apiUrl}/api/analytics`);
+        const userQuery = user?.id ? `?user_id=${user.id}` : "";
+        let response = await fetch(`/api/analytics${userQuery}`);
+        
+        if (!response.ok) {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+          response = await fetch(`${apiUrl}/api/analytics${userQuery}`);
+        }
+
         if (!response.ok) {
           throw new Error("Failed to fetch analytics data");
         }
@@ -70,7 +78,7 @@ export function useAnalytics() {
     // Live auto-refresh polling every 5 seconds for real-time analytics updates
     const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [user?.id]);
 
   return { data, loading, error };
 }
