@@ -42,13 +42,13 @@ export const TemplateToolbar: FC<TemplateToolbarProps> = ({
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
             type="text"
             placeholder="Search templates by name, tag, or description..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-9.5 pr-8 h-9 text-[12.5px] font-normal bg-card border-border rounded-xl placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-[#f5a623]/40"
+            className="pl-11 pr-8 h-9 text-[12.5px] font-normal bg-card border-border rounded-xl placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-[#f5a623]/40"
           />
           {searchQuery && (
             <button

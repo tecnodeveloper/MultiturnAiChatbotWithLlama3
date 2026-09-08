@@ -253,56 +253,58 @@ export const TemplatesUI: FC<TemplatesUIProps> = ({
         </Button>
       </header>
 
-      {/* Main Content Body */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 sm:p-8 max-w-7xl mx-auto w-full space-y-6">
-        {/* Search & Filter Toolbar */}
-        <TemplateToolbar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedScope={selectedScope}
-          onScopeChange={setSelectedScope}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-          totalCount={filteredTemplates.length}
-        />
-
-        {/* Content State */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5 pt-2">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="h-[220px] rounded-2xl border border-border bg-card/60 animate-pulse p-5"
-              />
-            ))}
-          </div>
-        ) : filteredTemplates.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4.5 pt-1">
-            {filteredTemplates.map((template) => (
-              <TemplateCard
-                key={template.id}
-                template={template}
-                onUse={handleUseTemplate}
-                onView={setViewingTemplate}
-                onEdit={handleOpenEdit}
-                onDuplicate={handleDuplicateTemplate}
-                onDelete={setDeletingTemplate}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            ))}
-          </div>
-        ) : templates.length === 0 ? (
-          <TemplateEmptyState type="empty" onCreateNew={handleOpenCreate} />
-        ) : (
-          <TemplateEmptyState
-            type="search"
-            onClearFilters={() => {
-              setSearchQuery("");
-              setSelectedScope("All");
-              setSelectedCategory(null);
-            }}
+      {/* Main Content Body - full-width scroll container so scrollbar sits flush against viewport edge */}
+      <div className="flex-1 w-full overflow-y-auto">
+        <div className="max-w-7xl mx-auto w-full px-6 sm:px-8 py-6 sm:py-8 space-y-6">
+          {/* Search & Filter Toolbar */}
+          <TemplateToolbar
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            selectedScope={selectedScope}
+            onScopeChange={setSelectedScope}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+            totalCount={filteredTemplates.length}
           />
-        )}
+
+          {/* Content State */}
+          {loading ? (
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6 pt-1">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="h-[220px] rounded-2xl border border-border bg-card/60 animate-pulse p-5"
+                />
+              ))}
+            </div>
+          ) : filteredTemplates.length > 0 ? (
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6 pt-1">
+              {filteredTemplates.map((template) => (
+                <TemplateCard
+                  key={template.id}
+                  template={template}
+                  onUse={handleUseTemplate}
+                  onView={setViewingTemplate}
+                  onEdit={handleOpenEdit}
+                  onDuplicate={handleDuplicateTemplate}
+                  onDelete={setDeletingTemplate}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              ))}
+            </div>
+          ) : templates.length === 0 ? (
+            <TemplateEmptyState type="empty" onCreateNew={handleOpenCreate} />
+          ) : (
+            <TemplateEmptyState
+              type="search"
+              onClearFilters={() => {
+                setSearchQuery("");
+                setSelectedScope("All");
+                setSelectedCategory(null);
+              }}
+            />
+          )}
+        </div>
       </div>
 
       {/* Detail Modal */}
