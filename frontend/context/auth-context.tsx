@@ -104,7 +104,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const { data } = await supabase.auth.getSession();
+        let { data } = await supabase.auth.getSession();
+        
+        // If no standard session is found, try to restore from our custom cookies
+        if (!data.session?.user && typeof document !== 'undefined') {
+          const cookies = document.cookie.split(";");
+          let accessToken = null;
+          let refreshToken = null;
+          
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith("sb-access-token=")) {
+              accessToken = cookie.substring("sb-access-token=".length);
+            } else if (cookie.startsWith("sb-refresh-token=")) {
+              refreshToken = cookie.substring("sb-refresh-token=".length);
+            }
+          }
+          
+          if (accessToken && refreshToken) {
+            const { data: restoredData, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken
+            });
+            if (!error && restoredData.session) {
+              data = restoredData;
+            }
+          }
+        }
+
         if (data.session?.user) {
           await fetchUserProfile(data.session.user);
         }
@@ -160,13 +187,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const handleLogout = async () => {
+    const clearLocalState = () => {
+      // Force clear any supabase auth tokens from local storage
+      Object.keys(window.localStorage).forEach((key) => {
+        if (key.startsWith("sb-")) {
+          window.localStorage.removeItem(key);
+        }
+      });
+      setUser(null);
+    };
+
     try {
       await signOut();
       await supabase.auth.signOut();
-      setUser(null);
+      clearLocalState();
       router.push("/login");
     } catch (error) {
       console.error("Logout error:", error);
+      clearLocalState();
       window.location.href = "/login";
     }
   };

@@ -6,7 +6,7 @@ export const runtime = "edge";
 
 export async function POST(req: Request) {
   try {
-    const { messages, provider, model: requestedModel, fileContexts } = await req.json();
+    const { messages, provider = "OpenRouter", model: requestedModel, fileContexts } = await req.json();
 
     let apiKey = "";
     let baseURL = "";
@@ -31,9 +31,9 @@ export async function POST(req: Request) {
         baseURL: baseURL,
       });
       aiProvider = openai;
-      // If model doesn't have a slash (like meta-llama/...), it's probably a stale ID from Groq/Ollama
-      if (!model || !model.includes("/")) {
-        model = "meta-llama/llama-3.3-70b-instruct";
+      // Fallback to free router if model is empty, not formatted for OpenRouter, or deprecated
+      if (!model || !model.includes("/") || model.includes("gemini-2.0-flash-exp")) {
+        model = "openrouter/free";
       }
     } else if (provider === "Ollama") {
       apiKey = "ollama";
@@ -46,6 +46,15 @@ export async function POST(req: Request) {
       // If model has a slash or looks like a Groq model ID, use Ollama default
       if (!model || model.includes("/") || model.includes("-versatile") || model.includes("-8192")) {
         model = "llama3:latest";
+      }
+    } else if (provider === "OpenAI") {
+      apiKey = process.env.OPENAI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_API_KEY || "";
+      const openai = createOpenAI({
+        apiKey: apiKey,
+      });
+      aiProvider = openai;
+      if (!model) {
+        model = "gpt-4o-mini";
       }
     }
 

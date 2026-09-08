@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, Dispatch, SetStateAction } from "react";
+import { createContext, useContext, useState, useEffect, ReactNode, Dispatch, SetStateAction } from "react";
 import { ContentType } from "@/types";
 
 export interface Message {
@@ -48,14 +48,47 @@ export function ChatProvider({ children }: { children: ReactNode }) {
   const [chats, setChats] = useState<Chat[]>([]);
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [isSending, setIsSending] = useState(false);
-  const [selectedProvider, setSelectedProvider] = useState("Groq");
-  const [selectedModel, setSelectedModel] = useState("llama-3.3-70b-versatile");
+  const [selectedProvider, setSelectedProviderState] = useState("OpenRouter");
+  const [selectedModel, setSelectedModelState] = useState("openrouter/free");
   const [searchTerm, setSearchTerm] = useState("");
   const [contentType, setContentType] = useState<ContentType>("chats");
   const [userInput, setUserInput] = useState("");
   const [prompts, setPrompts] = useState<any[]>([]);
   const [presets, setPresets] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
+
+  useEffect(() => {
+    try {
+      const savedProvider = localStorage.getItem("multiturn_provider");
+      const savedModel = localStorage.getItem("multiturn_model");
+      if (savedProvider && savedProvider !== "Ollama") {
+        setSelectedProviderState(savedProvider);
+      }
+      if (savedModel && savedModel !== "llama3" && !savedModel.includes("gemini-2.0-flash-exp")) {
+        setSelectedModelState(savedModel);
+      }
+    } catch (_) {}
+  }, []);
+
+  const setSelectedProvider: Dispatch<SetStateAction<string>> = (value) => {
+    setSelectedProviderState((prev) => {
+      const next = typeof value === "function" ? value(prev) : value;
+      try {
+        localStorage.setItem("multiturn_provider", next);
+      } catch (_) {}
+      return next;
+    });
+  };
+
+  const setSelectedModel: Dispatch<SetStateAction<string>> = (value) => {
+    setSelectedModelState((prev) => {
+      const next = typeof value === "function" ? value(prev) : value;
+      try {
+        localStorage.setItem("multiturn_model", next);
+      } catch (_) {}
+      return next;
+    });
+  };
 
   return (
     <ChatContext.Provider

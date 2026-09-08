@@ -82,4 +82,16 @@ export async function signOut() {
     const data = await response.json();
     throw new Error(data.error || "Failed to sign out");
   }
+
+  // Clear client-side manual cookies robustly
+  const cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i].trim();
+    if (cookie.startsWith("sb-")) {
+      const eqPos = cookie.indexOf("=");
+      const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+      document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax;`;
+      document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT;`; // Try without SameSite just in case
+    }
+  }
 }

@@ -10,5 +10,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 
+  // Explicitly clear the manual cookies we set during OAuth/Email login
+  // We must match the path and sameSite options used when they were created
+  response.cookies.set("sb-access-token", "", { path: "/", maxAge: 0, sameSite: "lax" });
+  response.cookies.set("sb-refresh-token", "", { path: "/", maxAge: 0, sameSite: "lax" });
+
   return response;
 }

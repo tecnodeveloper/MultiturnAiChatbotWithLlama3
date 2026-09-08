@@ -5,8 +5,18 @@ import { useChat } from "@/context/chat-context";
 import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Sparkles, ChevronDown, Check } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { AI_PROVIDERS } from "@/lib/ai-providers";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+
+} from "@/components/ui/dropdown-menu";
 
 interface ChatUIProps {
   sidebarOpen: boolean;
@@ -35,10 +45,17 @@ export const ChatUI: FC<ChatUIProps> = ({
     chats,
     currentChatId,
     isSending,
-    setUserInput
+    setUserInput,
+    selectedProvider,
+    setSelectedProvider,
+    selectedModel,
+    setSelectedModel,
   } = useChat();
 
   const currentChat = chats.find(c => c.id === currentChatId);
+  const currentProviderObj = AI_PROVIDERS.find(p => p.id === selectedProvider);
+  const currentModelObj = currentProviderObj?.models.find(m => m.id === selectedModel);
+  const currentModelDisplayName = currentModelObj?.name || selectedModel;
 
   const handleSuggestionClick = (suggestion: string) => {
     setUserInput(suggestion);
@@ -58,11 +75,55 @@ export const ChatUI: FC<ChatUIProps> = ({
         </Button>
       )}
 
-      {/* Header: Centered New Chat Title & Top Right Corner Theme Toggle */}
+      {/* Header: Model Selector on Left, Title Centered, Theme Toggle on Right */}
       <header className="flex max-h-[60px] min-h-[60px] w-full items-center justify-between border-b border-[#e2e8f0] dark:border-slate-800/60 px-6 relative bg-white dark:bg-[#070a12] shrink-0">
-        <div className="w-[80px]" />
+        <div className="flex items-center gap-2">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 gap-1.5 rounded-full border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-100 dark:hover:bg-slate-800 backdrop-blur-sm"
+              >
+                <Sparkles className="h-3.5 w-3.5 text-blue-500" />
+                <span className="font-semibold text-blue-600 dark:text-blue-400">{selectedProvider}:</span>
+                <span className="max-w-[140px] truncate">{currentModelDisplayName}</span>
+                <ChevronDown className="h-3 w-3 opacity-60 ml-0.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" className="w-72 max-h-[420px] overflow-y-auto">
+              {AI_PROVIDERS.map((provider) => (
+                <div key={provider.id}>
+                  <DropdownMenuLabel className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 py-1">
+                    {provider.name}
+                  </DropdownMenuLabel>
+                  {provider.models.map((model) => {
+                    const isSelected = selectedProvider === provider.id && selectedModel === model.id;
+                    return (
+                      <DropdownMenuItem
+                        key={model.id}
+                        onClick={() => {
+                          setSelectedProvider(provider.id);
+                          setSelectedModel(model.id);
+                        }}
+                        className={`flex items-center justify-between px-2 py-1.5 text-xs rounded-md cursor-pointer transition-colors ${isSelected
+                            ? "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold"
+                            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
+                          }`}
+                      >
+                        <span className="truncate">{model.name}</span>
+                        {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0 ml-1.5" />}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                  <DropdownMenuSeparator />
+                </div>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
-        <h1 className="absolute left-1/2 -translate-x-1/2 text-base font-bold text-[#0f172a] dark:text-slate-100 text-center">
+        <h1 className="absolute left-1/2 -translate-x-1/2 text-base font-bold text-[#0f172a] dark:text-slate-100 text-center pointer-events-none hidden sm:block">
           {currentChat?.title || "New Chat"}
         </h1>
 

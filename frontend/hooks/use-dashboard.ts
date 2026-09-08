@@ -143,9 +143,9 @@ export function useDashboard() {
 
     setIsSending(true);
     const userContent = content.trim();
+    let chatId = currentChatId;
 
     try {
-      let chatId = currentChatId;
       let activeChat = chats.find(c => c.id === chatId);
 
       if (!chatId) {
@@ -320,6 +320,18 @@ export function useDashboard() {
       if (error.name !== "AbortError") {
         toast.error(error.message || "Failed to send message");
       }
+      
+      // If there was an error, remove the empty assistant message so it doesn't linger
+      setChats((prev) =>
+        prev.map((c) =>
+          c.id === chatId
+            ? {
+                ...c,
+                messages: c.messages.filter((m) => m.content !== "" || m.role !== "assistant"),
+              }
+            : c
+        )
+      );
     } finally {
       setIsSending(false);
       abortControllerRef.current = null;

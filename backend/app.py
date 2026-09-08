@@ -12,8 +12,9 @@ import os
 import requests
 from dotenv import load_dotenv
 
-# Load credentials from .env file
-load_dotenv()
+# Load credentials from .env.local file in frontend
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', 'frontend', '.env.local')
+load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -144,6 +145,15 @@ def update_session_title(chat_id, title):
 @app.route('/')
 def index():
     return "Multi-turn LLaMA 3 Chatbot Backend (Groq & Analytics Enabled)"
+
+@app.route('/api/analytics', methods=['GET'])
+def get_analytics():
+    try:
+        from analytics.scripts.feedback_processor import process_analytics
+        data = process_analytics()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
