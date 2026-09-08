@@ -13,17 +13,17 @@
     --popover-foreground: 222 47% 11%;
     --muted: 210 40% 96%; /* #F1F5F9 */
     --muted-foreground: 215 16% 47%; /* #64748B - Secondary Text */
-    --accent: 214 95% 93%; /* #DBEAFE - Active Sidebar Item */
-    --accent-foreground: 221 83% 53%; /* #2563EB - Active Text */
+    --accent: 37 91% 93%; /* Low-opacity warm orange wash */
+    --accent-foreground: 37 91% 40%; /* Accessible orange text */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
     --border: 214 32% 91%; /* #E2E8F0 - Divider / Border */
     --input: 213 27% 84%; /* #CBD5E1 */
-    --primary: 221 83% 53%; /* #2563EB - Primary Button */
-    --primary-foreground: 0 0% 100%;
+    --primary: 37 91% 55%; /* #F5A623 - Brand Orange */
+    --primary-foreground: 225 21% 8%; /* #0F1117 - Dark contrast text */
     --secondary: 210 40% 96%;
     --secondary-foreground: 222 47% 11%;
-    --ring: 221 83% 53%;
+    --ring: 37 91% 55%;
     --radius: 0.75rem;
   }
 
@@ -36,17 +36,17 @@
     --popover-foreground: 0 0% 100%;
     --muted: 217 19% 17%; /* #1f2937 - Dark Gray */
     --muted-foreground: 215 20% 65%; /* #9ca3af - Light Gray */
-    --accent: 217 91% 60%; /* #3b82f6 - Blue */
-    --accent-foreground: 0 0% 100%;
+    --accent: 37 91% 55%; /* #F5A623 - Brand Orange */
+    --accent-foreground: 225 21% 8%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98.2%;
     --border: 217 19% 17%; /* #1f2937 */
     --input: 217 19% 17%;
-    --primary: 217 91% 60%; /* #3b82f6 - Blue */
-    --primary-foreground: 0 0% 100%;
+    --primary: 37 91% 55%; /* #F5A623 - Brand Orange */
+    --primary-foreground: 225 21% 8%; /* #0F1117 - Dark contrast text */
     --secondary: 217 19% 17%;
     --secondary-foreground: 0 0% 100%;
-    --ring: 217 91% 60%;
+    --ring: 37 91% 55%;
   }
 }
 

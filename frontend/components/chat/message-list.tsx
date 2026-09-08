@@ -24,12 +24,12 @@ const AssistantMessage: FC<{ content: string }> = ({ content }) => {
 
   return (
     <div className="flex gap-3 justify-start group">
-      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground flex-shrink-0 shadow-sm">
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#f5a623] text-[#0f1117] text-xs font-medium flex-shrink-0 shadow-sm">
         AI
       </div>
       <div className="flex flex-col gap-1 max-w-2xl">
-        <div className="relative rounded-2xl rounded-bl-md bg-white dark:bg-[#0e1626] border border-[#e2e8f0] dark:border-slate-800 text-[#0f172a] dark:text-slate-100 px-4 py-3 shadow-sm text-sm">
-          <ReactMarkdown className="prose dark:prose-invert max-w-none break-words leading-6 pb-6">
+        <div className="relative rounded-2xl rounded-tl-sm bg-white dark:bg-[#10141e] border border-border text-foreground px-4 py-3 shadow-sm text-[14.5px] leading-6">
+          <ReactMarkdown className="prose dark:prose-invert max-w-none break-words leading-6 pb-6 text-[14.5px]">
             {content}
           </ReactMarkdown>
           
@@ -38,35 +38,43 @@ const AssistantMessage: FC<{ content: string }> = ({ content }) => {
               onClick={() => setFeedback(feedback === 'up' ? null : 'up')}
               className={`p-1 rounded-md transition-colors ${
                 feedback === 'up' 
-                  ? "text-[#a8c686] bg-[#a8c686]/10" 
-                  : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                  ? "text-[#f5a623] bg-[#f5a623]/10" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
+              title="Helpful response"
             >
               <ThumbsUp 
-                className="h-4 w-4" 
-                fill={feedback === 'up' ? "#a8c686" : "none"} 
+                className="h-3.5 w-3.5" 
+                fill={feedback === 'up' ? "#f5a623" : "none"} 
               />
             </button>
             <button
               onClick={() => setFeedback(feedback === 'down' ? null : 'down')}
               className={`p-1 rounded-md transition-colors ${
                 feedback === 'down' 
-                  ? "text-[#e57373] bg-[#e57373]/10" 
-                  : "text-gray-400 hover:text-gray-600 hover:bg-gray-100"
+                  ? "text-muted-foreground bg-muted" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
+              title="Not helpful response"
             >
               <ThumbsDown 
-                className="h-4 w-4" 
-                fill={feedback === 'down' ? "#e57373" : "none"} 
+                className="h-3.5 w-3.5" 
+                fill={feedback === 'down' ? "currentColor" : "none"} 
               />
             </button>
           </div>
         </div>
       </div>
-      <Button variant="ghost" size="icon" className="h-9 w-9 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => {
-        navigator.clipboard.writeText(content);
-      }}>
-        <Copy className="h-4 w-4" />
+      <Button 
+        variant="ghost" 
+        size="icon" 
+        className="h-8 w-8 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground rounded-lg" 
+        onClick={() => {
+          navigator.clipboard.writeText(content);
+        }}
+        title="Copy response"
+      >
+        <Copy className="h-3.5 w-3.5" />
       </Button>
     </div>
   );
@@ -114,14 +122,14 @@ export const MessageList: FC<MessageListProps> = ({
               <AssistantMessage content={item.content} />
             ) : (
               <div className="flex gap-3 justify-end">
-                <div className="max-w-2xl rounded-2xl rounded-br-md bg-[#2563eb] text-white px-4 py-3 shadow-sm text-sm">
-                  <ReactMarkdown className="prose prose-invert max-w-none break-words leading-6">
+                <div className="max-w-2xl rounded-2xl rounded-tr-sm bg-slate-200/90 dark:bg-slate-800/90 text-slate-900 dark:text-slate-100 border border-slate-300/60 dark:border-slate-700/60 px-4 py-3 shadow-sm text-[14.5px] leading-6">
+                  <ReactMarkdown className="prose dark:prose-invert max-w-none break-words leading-6 text-[14.5px]">
                     {item.content}
                   </ReactMarkdown>
                 </div>
-                <Avatar className="h-9 w-9 flex-shrink-0 border border-primary/20 shadow-sm">
+                <Avatar className="h-8 w-8 flex-shrink-0 border border-border shadow-sm">
                   <AvatarImage src={user?.avatar} />
-                  <AvatarFallback className="bg-primary/20 text-primary text-xs font-bold">
+                  <AvatarFallback className="bg-muted text-muted-foreground text-xs font-medium">
                     {user?.name?.charAt(0) || user?.email?.charAt(0) || "U"}
                   </AvatarFallback>
                 </Avatar>
@@ -141,14 +149,14 @@ export const MessageList: FC<MessageListProps> = ({
 
       {isSending && (
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#f5a623] text-[#0f1117] text-xs font-medium shadow-sm">
             AI
           </div>
-          <div className="rounded-2xl rounded-bl-md bg-background border border-border px-4 py-3 shadow-sm">
-            <div className="flex gap-1">
-              <span className="h-2 w-2 animate-bounce rounded-full bg-foreground/50" />
-              <span className="h-2 w-2 animate-bounce rounded-full bg-foreground/50 [animation-delay:120ms]" />
-              <span className="h-2 w-2 animate-bounce rounded-full bg-foreground/50 [animation-delay:240ms]" />
+          <div className="rounded-2xl rounded-tl-sm bg-card border border-border px-4 py-3 shadow-sm">
+            <div className="flex gap-1.5 items-center">
+              <span className="h-2 w-2 animate-bounce rounded-full bg-[#f5a623]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-[#f5a623] [animation-delay:120ms]" />
+              <span className="h-2 w-2 animate-bounce rounded-full bg-[#f5a623] [animation-delay:240ms]" />
             </div>
           </div>
         </div>
@@ -157,4 +165,3 @@ export const MessageList: FC<MessageListProps> = ({
     </div>
   );
 };
-

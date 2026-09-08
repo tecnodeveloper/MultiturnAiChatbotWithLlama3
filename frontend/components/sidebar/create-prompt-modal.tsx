@@ -37,39 +37,45 @@ export const CreatePromptModal: FC<CreatePromptModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="bg-card border-border">
         <DialogHeader>
-          <DialogTitle>Create New Prompt</DialogTitle>
+          <DialogTitle className="text-base font-medium text-foreground">Create new prompt</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name" className="text-xs font-normal text-muted-foreground">Name</Label>
             <Input
               id="name"
               placeholder="Prompt name..."
               value={name}
               onChange={(e) => setName(e.target.value)}
+              className="text-xs bg-background border-border text-foreground"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="content">Content</Label>
+            <Label htmlFor="content" className="text-xs font-normal text-muted-foreground">Content</Label>
             <Textarea
               id="content"
               placeholder="Prompt content..."
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={5}
+              className="text-xs bg-background border-border text-foreground"
             />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="ghost" onClick={onClose} className="text-xs font-normal">
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={!name || !content}>
+          <Button 
+            onClick={handleSave} 
+            disabled={!name || !content}
+            className="text-xs font-medium bg-[#f5a623] hover:bg-[#e09612] text-[#0f1117] transition-colors"
+          >
             Save
           </Button>
         </DialogFooter>

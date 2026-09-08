@@ -58,37 +58,36 @@ export function FeedbackModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] bg-card border-border">
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
         >
           <X className="h-4 w-4" />
         </button>
 
         <DialogHeader>
-          <DialogTitle>Share Your Feedback</DialogTitle>
-          <DialogDescription>
-            How was your conversation with MultiTurn AI? Your feedback helps us
-            improve.
+          <DialogTitle className="text-base font-medium text-foreground">Share your feedback</DialogTitle>
+          <DialogDescription className="text-xs text-muted-foreground">
+            How was your conversation with MultiTurn AI? Your feedback helps us improve.
           </DialogDescription>
         </DialogHeader>
 
         <div className="grid gap-4 py-4">
           <div className="flex flex-col items-center gap-2">
-            <Label className="text-center mb-2">Rating</Label>
-            <div className="flex gap-1">
+            <Label className="text-center mb-2 text-xs font-normal text-muted-foreground">Rating</Label>
+            <div className="flex gap-1.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
                   key={star}
                   onClick={() => setRating(star)}
-                  className="transition-transform hover:scale-110"
+                  className="transition-transform hover:scale-110 p-0.5"
                 >
                   <Star
-                    className={`h-8 w-8 ${
+                    className={`h-7 w-7 ${
                       rating >= star
-                        ? "fill-yellow-400 text-yellow-400"
-                        : "text-gray-300"
+                        ? "fill-[#f5a623] text-[#f5a623]"
+                        : "text-muted-foreground/30"
                     }`}
                   />
                 </button>
@@ -97,24 +96,28 @@ export function FeedbackModal({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="comment">Comments (Optional)</Label>
+            <Label htmlFor="comment" className="text-xs font-normal text-muted-foreground">Comments (optional)</Label>
             <Textarea
               id="comment"
               placeholder="Tell us what you liked or what we can improve..."
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="resize-none"
+              className="resize-none text-xs bg-background border-border text-foreground"
               rows={4}
             />
           </div>
         </div>
 
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose} disabled={isSubmitting}>
+          <Button variant="ghost" onClick={onClose} disabled={isSubmitting} className="text-xs font-normal">
             Skip
           </Button>
-          <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit Feedback"}
+          <Button 
+            onClick={handleSubmit} 
+            disabled={isSubmitting}
+            className="text-xs font-medium bg-[#f5a623] hover:bg-[#e09612] text-[#0f1117] transition-colors"
+          >
+            {isSubmitting ? "Submitting..." : "Submit feedback"}
           </Button>
         </DialogFooter>
       </DialogContent>

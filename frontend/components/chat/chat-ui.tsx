@@ -5,7 +5,7 @@ import { useChat } from "@/context/chat-context";
 import { MessageList } from "./message-list";
 import { ChatInput } from "./chat-input";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Sparkles, ChevronDown, Check } from "lucide-react";
+import { ChevronRight, Sparkles, ChevronDown, Check, MessageSquare, Plus } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AI_PROVIDERS } from "@/lib/ai-providers";
 import {
@@ -15,7 +15,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-
 } from "@/components/ui/dropdown-menu";
 
 interface ChatUIProps {
@@ -62,39 +61,40 @@ export const ChatUI: FC<ChatUIProps> = ({
   };
 
   return (
-    <main className="relative flex min-w-0 flex-1 flex-col bg-[#f8fafc] dark:bg-[#070a12] font-sans h-full overflow-hidden text-[#0f172a] dark:text-foreground">
-      {/* Sidebar Toggle Floating Button (when sidebar collapsed) */}
-      {!sidebarOpen && (
-        <Button
-          className="absolute left-[8px] top-[14px] z-50 size-[32px] cursor-pointer rounded-full border border-[#cbd5e1] dark:border-slate-800 bg-white dark:bg-slate-900 shadow-md transition-all duration-200 hover:scale-110 hover:bg-[#f1f5f9] dark:hover:bg-slate-800"
-          variant="ghost"
-          size="icon"
-          onClick={() => setSidebarOpen(true)}
-        >
-          <ChevronRight size={24} className="text-[#0f172a] dark:text-slate-300" />
-        </Button>
-      )}
+    <main className="relative flex min-w-0 flex-1 flex-col bg-[#f8fafc] dark:bg-[#070a12] font-sans h-full overflow-hidden text-foreground">
+      {/* Three-Zone Header: Left (Model selector), Center (Chat title anchor), Right (Control cluster) */}
+      <header className="flex max-h-[60px] min-h-[60px] w-full items-center justify-between border-b border-border px-4 sm:px-6 relative bg-card/80 backdrop-blur-md shrink-0">
+        {/* Left Zone — Model selector & navigation */}
+        <div className="flex items-center gap-2 z-10 min-w-[120px] sm:min-w-[180px]">
+          {!sidebarOpen && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 rounded-xl border border-border bg-card hover:bg-muted/60 text-muted-foreground hover:text-foreground transition-all shrink-0"
+              onClick={() => setSidebarOpen(true)}
+              title="Expand sidebar"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          )}
 
-      {/* Header: Model Selector on Left, Title Centered, Theme Toggle on Right */}
-      <header className="flex max-h-[60px] min-h-[60px] w-full items-center justify-between border-b border-[#e2e8f0] dark:border-slate-800/60 px-6 relative bg-white dark:bg-[#070a12] shrink-0">
-        <div className="flex items-center gap-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 gap-1.5 rounded-full border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 px-3 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-sm hover:bg-slate-100 dark:hover:bg-slate-800 backdrop-blur-sm"
+                className="h-8 gap-2 rounded-xl border-border bg-background/60 hover:bg-muted/50 hover:border-[#f5a623]/30 px-3 text-[12.5px] font-normal text-foreground shadow-sm transition-all duration-150"
               >
-                <Sparkles className="h-3.5 w-3.5 text-blue-500" />
-                <span className="font-semibold text-blue-600 dark:text-blue-400">{selectedProvider}:</span>
-                <span className="max-w-[140px] truncate">{currentModelDisplayName}</span>
-                <ChevronDown className="h-3 w-3 opacity-60 ml-0.5" />
+                <Sparkles className="h-3.5 w-3.5 text-[#f5a623]" />
+                <span className="font-medium text-[#f5a623]">{selectedProvider}:</span>
+                <span className="max-w-[120px] sm:max-w-[160px] truncate">{currentModelDisplayName}</span>
+                <ChevronDown className="h-3 w-3 text-muted-foreground ml-0.5 opacity-70" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-72 max-h-[420px] overflow-y-auto">
+            <DropdownMenuContent align="start" className="w-72 max-h-[420px] overflow-y-auto bg-card border-border text-foreground">
               {AI_PROVIDERS.map((provider) => (
                 <div key={provider.id}>
-                  <DropdownMenuLabel className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-2 py-1">
+                  <DropdownMenuLabel className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider px-2 py-1">
                     {provider.name}
                   </DropdownMenuLabel>
                   {provider.models.map((model) => {
@@ -106,13 +106,14 @@ export const ChatUI: FC<ChatUIProps> = ({
                           setSelectedProvider(provider.id);
                           setSelectedModel(model.id);
                         }}
-                        className={`flex items-center justify-between px-2 py-1.5 text-xs rounded-md cursor-pointer transition-colors ${isSelected
-                            ? "bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 font-semibold"
-                            : "text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
-                          }`}
+                        className={`flex items-center justify-between px-2.5 py-1.5 text-xs rounded-lg cursor-pointer transition-colors ${
+                          isSelected
+                            ? "bg-[#f5a623]/12 text-[#b8740c] dark:bg-[#f5a623]/15 dark:text-[#f5a623] font-medium"
+                            : "text-foreground hover:bg-muted/60"
+                        }`}
                       >
                         <span className="truncate">{model.name}</span>
-                        {isSelected && <Check className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400 shrink-0 ml-1.5" />}
+                        {isSelected && <Check className="h-3.5 w-3.5 text-[#f5a623] shrink-0 ml-1.5" />}
                       </DropdownMenuItem>
                     );
                   })}
@@ -123,12 +124,30 @@ export const ChatUI: FC<ChatUIProps> = ({
           </DropdownMenu>
         </div>
 
-        <h1 className="absolute left-1/2 -translate-x-1/2 text-base font-bold text-[#0f172a] dark:text-slate-100 text-center pointer-events-none hidden sm:block">
-          {currentChat?.title || "New Chat"}
-        </h1>
+        {/* Center Zone — Current chat title anchor */}
+        <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center gap-2 text-center pointer-events-none max-w-[45%] truncate">
+          <div className="p-1 rounded-md bg-[#f5a623]/10 text-[#f5a623] shrink-0 hidden sm:flex">
+            <MessageSquare className="h-3.5 w-3.5" />
+          </div>
+          <h1 className="text-[14px] sm:text-[15px] font-medium text-foreground tracking-tight truncate">
+            {currentChat?.title || "New chat"}
+          </h1>
+        </div>
 
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
+        {/* Right Zone — Control cluster */}
+        <div className="flex items-center justify-end gap-1.5 z-10 min-w-[120px] sm:min-w-[180px]">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-xl border border-border bg-background/50 hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all"
+            onClick={onNewChat}
+            title="New chat"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
@@ -157,4 +176,3 @@ export const ChatUI: FC<ChatUIProps> = ({
     </main>
   );
 };
-
