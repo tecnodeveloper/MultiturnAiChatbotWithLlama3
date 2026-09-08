@@ -64,7 +64,15 @@ export const Sidebar: FC<SidebarProps> = ({
   const [editingChatId, setEditingChatId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
 
-  const effectiveActiveTab = pathname === "/projects" ? "projects" : pathname === "/analytics" ? "analytics" : pathname === "/account" ? "settings" : activeTab;
+  const effectiveActiveTab = pathname === "/projects"
+    ? "projects"
+    : pathname === "/analytics"
+    ? "analytics"
+    : pathname === "/account"
+    ? "settings"
+    : pathname.startsWith("/templates")
+    ? "templates"
+    : activeTab;
 
   const handleNavClick = (id: string) => {
     setActiveTab(id as any);
@@ -74,6 +82,8 @@ export const Sidebar: FC<SidebarProps> = ({
       router.push("/dashboard");
     } else if (id === "analytics") {
       router.push("/analytics");
+    } else if (id === "templates") {
+      router.push("/templates");
     } else if (id === "settings") {
       router.push("/account");
     }

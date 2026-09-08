@@ -210,11 +210,17 @@ export function useDashboard() {
       const controller = new AbortController();
       abortControllerRef.current = controller;
 
+      const systemPrompt = typeof window !== "undefined" ? localStorage.getItem("multiturn_system_prompt") : null;
+      const outboundMessages: any[] = [...(activeChat?.messages || []), { ...userMessage, content: messageContent }];
+      if (systemPrompt && !outboundMessages.some((m: any) => m.role === "system")) {
+        outboundMessages.unshift({ role: "system", content: systemPrompt });
+      }
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          messages: [...(activeChat?.messages || []), { ...userMessage, content: messageContent }],
+          messages: outboundMessages,
           provider: selectedProvider,
           model: selectedModel,
         }),
